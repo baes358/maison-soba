@@ -5,7 +5,7 @@ A digital perfume workshop. A user describes a fragrance in their own words and 
 ## Stack
 
 - Static HTML, CSS, vanilla JS — no framework.
-- One Vercel serverless function (`/api/generate.js`) that calls **Claude Haiku 4.5** (`claude-haiku-4-5-20251001`) via `@anthropic-ai/sdk`.
+- One Vercel serverless function (`/api/generate.js`) that calls **Claude Sonnet 4.6** (`claude-sonnet-4-6`) via `@anthropic-ai/sdk`. (Originally targeted Haiku 4.5; switched to Sonnet for more reliable multi-constraint JSON.)
 - API key lives only on the server, in the `ANTHROPIC_API_KEY` Vercel environment variable.
 
 ## Local development

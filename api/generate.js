@@ -15,7 +15,7 @@ import Anthropic from '@anthropic-ai/sdk';
 import { SYSTEM_PROMPT, buildUserMessage } from './lib/prompt.js';
 import { MATERIALS_BY_NAME } from './lib/materials.js';
 
-const MODEL = 'claude-haiku-4-5-20251001';
+const MODEL = 'claude-sonnet-4-6';
 const MAX_BRIEF_CHARS = 500;
 const RATE_LIMIT_PER_HOUR = 5;
 const RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000;
@@ -189,7 +189,7 @@ function extractJson(text) {
   }
 }
 
-async function callClaude(client, userMessage) {
+async function callClaude(client, messages) {
   const response = await client.messages.create({
     model: MODEL,
     max_tokens: MAX_OUTPUT_TOKENS,
@@ -200,7 +200,7 @@ async function callClaude(client, userMessage) {
       // for our traffic shape — every cache hit saves cost and latency.
       cache_control: { type: 'ephemeral' }
     }],
-    messages: [{ role: 'user', content: userMessage }]
+    messages
   });
   const block = response.content.find(b => b.type === 'text');
   return block?.text ?? '';
@@ -241,17 +241,20 @@ export default async function handler(req, res) {
   gcRateLimits();
 
   const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
-  const userMsg = buildUserMessage(validation.brief);
+  const initialUserMsg = buildUserMessage(validation.brief);
 
   let composition = null;
   let lastError = null;
+  let messages = [{ role: 'user', content: initialUserMsg }];
+  let lastAssistantText = null;
 
-  // Two attempts. On a malformed or invalid response, retry once with the
-  // same prompt — the cache makes the system block free on the second call.
+  // Two attempts. On retry we feed the previous (broken) assistant turn
+  // back in along with a corrective user message that names the exact
+  // schema violation — much more reliable than re-asking blind.
   for (let attempt = 1; attempt <= 2; attempt++) {
     let text;
     try {
-      text = await callClaude(client, userMsg);
+      text = await callClaude(client, messages);
     } catch (err) {
       console.error(`[claude-api] attempt ${attempt} failed:`, err?.message || err);
       lastError = `upstream: ${err?.message || 'unknown'}`;
@@ -263,11 +266,17 @@ export default async function handler(req, res) {
       }
       continue;
     }
+    lastAssistantText = text;
 
     const parsed = extractJson(text);
     if (!parsed) {
       console.error(`[parse] attempt ${attempt}: malformed JSON. head:`, text.slice(0, 300));
       lastError = 'malformed JSON';
+      messages = [
+        { role: 'user', content: initialUserMsg },
+        { role: 'assistant', content: text },
+        { role: 'user', content: 'Your previous response was not valid JSON. Re-output the full composition as a single JSON object. No prose, no code fences, no commentary.' }
+      ];
       continue;
     }
 
@@ -275,6 +284,11 @@ export default async function handler(req, res) {
     if (schemaError) {
       console.error(`[schema] attempt ${attempt}: ${schemaError}`);
       lastError = schemaError;
+      messages = [
+        { role: 'user', content: initialUserMsg },
+        { role: 'assistant', content: text },
+        { role: 'user', content: `Your previous composition failed validation with this error:\n\n  ${schemaError}\n\nFix that specific issue and re-output the complete corrected JSON. Keep the same artistic direction (name, family, character of the composition); only fix the constraint violation. No prose, no code fences.` }
+      ];
       continue;
     }
 

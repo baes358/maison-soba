@@ -40,11 +40,30 @@ HOW TO COMPOSE
 
 1. Read the brief twice. Identify the real subject — a feeling, a place, a season, a memory, a texture. Resist literalism: "library in autumn" is not just paper and leather.
 2. Choose a fragrance family in classical terms (e.g. Floral Chypre, Smoky Oriental, Citrus Aromatic, Mineral Floral, Animalic Leather, Green Aromatic). Match the olfactive family honestly to the brief. A brief about salt and driftwood is not a chypre; a brief about a library is not a citrus. Do not default toward florals or orientals.
-3. Build the pyramid carefully:
-   • 2–4 top notes, summing to 15–30% of the formula
-   • 3–5 heart notes, summing to 30–50%
-   • 3–6 base notes, summing to 25–50%
-   • All notes together must total exactly 100. First, round every individual pct to an integer. Then adjust ONLY the single largest note (up or down) to absorb the rounding drift so the sum lands on exactly 100. Do not re-round after that final adjustment.
+3. Build the pyramid in TWO passes — do not skip the first.
+
+   PASS A — section totals. Before picking any material, decide three integers:
+     • TOP_TOTAL    ∈ [15, 30]
+     • HEART_TOTAL  ∈ [30, 50]
+     • BASE_TOTAL   ∈ [25, 50]
+     • TOP_TOTAL + HEART_TOTAL + BASE_TOTAL = exactly 100
+   Pick these to suit the composition: a citrus aromatic might be 28 / 42 / 30; a smoky oriental 17 / 33 / 50; a green floral 22 / 48 / 30. Then commit to these totals.
+
+   PASS B — fill each section with materials whose individual pcts sum to that section's locked total.
+     • 2–4 top notes summing to exactly TOP_TOTAL
+     • 3–5 heart notes summing to exactly HEART_TOTAL
+     • 3–6 base notes summing to exactly BASE_TOTAL
+   Round every individual pct to an integer. If after rounding a section's sum is off, adjust ONLY the largest note in that section to absorb the drift — bump it up or down until the section equals its locked total exactly. The sum constraint OVERRIDES any aesthetic preference. Iso E Super, Hedione, Sandalwood, Galaxolide, and Ambroxan all have wide ranges and are the natural absorbers of rounding drift.
+
+   MATH EXAMPLE (illustrative numbers only, not a composition to copy):
+     Suppose Pass A gives TOP_TOTAL=20, HEART_TOTAL=42, BASE_TOTAL=38.
+       top:     7 +  5 +  8                 = 20  ✓
+       heart:   8 +  2 + 20 +  6 +  6       = 42  ✓
+       base:   12 + 15 +  8 +  3            = 38  ✓
+       grand:  20 + 42 + 38                 = 100 ✓
+     Notice base hits 38 because the Iso E Super share (15) was nudged up
+     to close the gap. That nudge is mandatory, not optional.
+
 4. Each individual material's pct must lie inside its typical_pct_range.
 5. Name the perfume — exactly two evocative English words, not literal. ("Library Autumn" is bad. "Folded Light" is better.)
 6. Write one poetic tagline, ≤ 12 words. No hashtags, no emoji.
@@ -120,17 +139,24 @@ Schema:
   "edition_number": <integer 1–999>
 }
 
-Before returning, silently verify:
-  ✓ Sum of all pct values = exactly 100
-  ✓ Top sum ∈ [15, 30]
-  ✓ Heart sum ∈ [30, 50]
-  ✓ Base sum ∈ [25, 50]
+Before returning, do this arithmetic step by step. This is NOT optional.
+
+  1. Add up the pcts in top_notes. Call this T.
+  2. Add up the pcts in heart_notes. Call this H.
+  3. Add up the pcts in base_notes. Call this B.
+  4. Compute G = T + H + B.
+  5. Verify: T ∈ [15, 30], H ∈ [30, 50], B ∈ [25, 50], G = 100.
+  6. If G < 100: add the deficit (100 − G) to the largest base note. Then re-verify B is still in [25, 50]; if not, distribute across the largest heart note too.
+  7. If G > 100: subtract the surplus from the largest base note. Then re-verify.
+  8. If any section is outside its band, move points from the largest note in an over-filled section to the largest note in an under-filled section.
+
+Also verify:
   ✓ Every material name appears verbatim in the materials list above
   ✓ Each pct lies inside that material's typical_pct_range
   ✓ Palette has exactly four hex colors, all muted (no neons, no pure white, no pure black)
   ✓ All required fields present and correctly typed
 
-If any check fails, fix it before responding. Output only the JSON object.`;
+If any check fails, FIX IT before responding. Output only the JSON object — no prose, no code fences, no commentary.`;
 
 // Optional user-message scaffolding. Keep this minimal — the system prompt
 // carries the weight.
