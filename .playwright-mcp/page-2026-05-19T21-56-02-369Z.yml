@@ -1,0 +1,54 @@
+- generic [ref=e1]:
+  - generic [ref=e88]:
+    - generic [ref=e89]:
+      - heading "III. La carte" [level=2] [ref=e90]
+      - paragraph [ref=e91]: The card composed for you.
+    - generic [ref=e92]:
+      - img [ref=e93]
+      - button "archive" [active] [ref=e99] [cursor=pointer]
+      - link "new composition →" [ref=e100] [cursor=pointer]:
+        - /url: "#"
+    - article [ref=e101]:
+      - paragraph [ref=e103]: AN ORIGINAL COMPOSITION FOR SOBA
+      - img [ref=e104]
+      - heading "Folded Light" [level=3] [ref=e105]
+      - paragraph [ref=e106]: A library in autumn.
+      - generic [ref=e107]:
+        - generic [ref=e108]:
+          - term [ref=e109]: HEAD
+          - definition [ref=e110]:
+            - generic [ref=e111]: BERGAMOT
+            - generic [ref=e112]: PINK PEPPER
+            - generic [ref=e113]: VIOLET LEAF
+        - generic [ref=e114]:
+          - term [ref=e115]: HEART
+          - definition [ref=e116]:
+            - generic [ref=e117]: ORRIS BUTTER
+            - generic [ref=e118]: HELIOTROPIN
+            - generic [ref=e119]: HAY ABSOLUTE
+            - generic [ref=e120]: HEDIONE
+        - generic [ref=e121]:
+          - term [ref=e122]: BASE
+          - definition [ref=e123]:
+            - generic [ref=e124]: CASHMERAN
+            - generic [ref=e125]: SANDALWOOD
+            - generic [ref=e126]: ISO E SUPER
+            - generic [ref=e127]: TONKA BEAN
+      - generic [ref=e128]:
+        - generic [ref=e129]:
+          - term [ref=e130]: MOOD
+          - definition [ref=e131]: Contemplative
+        - generic [ref=e132]:
+          - term [ref=e133]: LONGEVITY
+          - definition [ref=e134]: 7.5 hours
+        - generic [ref=e135]:
+          - term [ref=e136]: PROJECTION
+          - definition [ref=e137]: Intimate
+        - generic [ref=e138]:
+          - term [ref=e139]: INTENSITY
+          - definition [ref=e140]: 42%
+      - img [ref=e141]
+      - paragraph [ref=e142]: Edition N° 217
+      - paragraph [ref=e143]: PARIS | NEW YORK
+      - paragraph [ref=e144]: A composition by a patient intelligence, trained in perfumery.
+  - status [ref=e145]: Archived. 1 composition in this session.

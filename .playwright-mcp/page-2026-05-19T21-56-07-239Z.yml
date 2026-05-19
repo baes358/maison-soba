@@ -1,0 +1,12 @@
+- generic [ref=e30]:
+  - generic "Maison Sillage" [ref=e31]:
+    - img "Maison Sillage" [ref=e32]
+  - heading "I. La confidence" [level=2] [ref=e33]
+  - paragraph [ref=e34]: Entrust us with a memory.
+  - generic [ref=e35]:
+    - textbox "Name" [ref=e36]: soba
+    - textbox "A place, an hour, a presence…" [ref=e37]
+    - paragraph [ref=e38]: Describe it as you remember. The more particular, the better.
+    - button "entrust →" [ref=e39] [cursor=pointer]:
+      - text: entrust
+      - generic [ref=e40]: →

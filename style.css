@@ -582,6 +582,58 @@ body {
   letter-spacing: 0.02em;
 }
 
+/* ─── reveal choreography ────────────────────────────────────────────── */
+/* The carte screen's contents stagger in: bottle first, then card, then
+   header. Each piece lifts ever so slightly into place. This is the
+   emotional payoff after the ~30s wait — give it room. */
+@keyframes reveal-rise {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes reveal-rise-card {
+  from { opacity: 0; transform: translateY(12px) scale(0.985); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.screen--carte.active .carte-header {
+  animation: reveal-rise 520ms var(--ease) both;
+  animation-delay: 0ms;
+}
+
+.screen--carte.active .carte-bottle-col {
+  animation: reveal-rise 680ms var(--ease) both;
+  animation-delay: 120ms;
+}
+
+.screen--carte.active .card {
+  animation: reveal-rise-card 760ms var(--ease) both;
+  animation-delay: 240ms;
+}
+
+/* ─── accessibility ──────────────────────────────────────────────────── */
+/* Visible focus rings only for keyboard navigation (not mouse clicks). */
+.btn:focus-visible,
+.tag:focus-visible,
+.input:focus-visible,
+.link:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 3px;
+}
+
+/* Honor the user's preference to minimize motion. Keeps the structure
+   intact but collapses transitions/animations to near-instant. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 /* ─── toast / inline error ────────────────────────────────────────────── */
 .toast {
   position: fixed;
@@ -625,16 +677,26 @@ body {
   .stack { gap: 24px; }
   .ms-monogram { width: 72px; }
   .ms-monogram--large { width: 128px; }
+
+  /* Tag rows become a 2-column grid on mobile — keeps the layer compact
+     instead of becoming a single tall stack. */
   .tag-row {
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
     width: 100%;
+    border-right: none;
   }
   .tag {
-    border-right: none;
+    border-right: 1px solid var(--hairline);
     border-bottom: 1px solid var(--hairline);
-    text-align: left;
+    text-align: center;
   }
+  /* Right column tags: no right border (they're at the edge of the row) */
+  .tag:nth-child(2n) { border-right: none; }
+  /* Last row(s): no bottom border. Handles both even and odd counts. */
+  .tag:nth-last-child(-n+2):nth-child(2n+1),
   .tag:last-child { border-bottom: none; }
+
   .card { padding: 32px 24px 24px; }
   .card__name { font-size: 56px; }
   .card__pyramid {
