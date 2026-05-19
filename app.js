@@ -159,12 +159,34 @@ function stopLoadingRotation() {
   loadingTimer = null;
 }
 
-// ─── carte rendering (placeholder — Step 5 will refine) ─────────────────
-function formatNotes(notes) {
-  if (!Array.isArray(notes) || notes.length === 0) return '—';
-  return notes
-    .map(n => n.material.toUpperCase())
-    .join('\n');
+// ─── carte rendering ────────────────────────────────────────────────────
+
+// Material display names on the card. When a material has a parenthetical
+// trade name we use that — it reads more refined on the card than the
+// full canonical name ("ORRIS BUTTER" beats "IRIS (ORRIS BUTTER)").
+//
+// Examples:
+//   "Iris (Orris Butter)"             → "ORRIS BUTTER"
+//   "Cypriol (Nagarmotha)"            → "NAGARMOTHA"
+//   "Aldehyde C-14 (Peach Lactone)"   → "PEACH LACTONE"
+//   "Bergamot"                        → "BERGAMOT"
+function displayMaterial(name) {
+  const m = name.match(/\(([^)]+)\)/);
+  return (m ? m[1] : name).toUpperCase();
+}
+
+function renderLayerNotes(targetEl, notes) {
+  targetEl.innerHTML = '';
+  if (!Array.isArray(notes) || notes.length === 0) {
+    targetEl.textContent = '—';
+    return;
+  }
+  for (const n of notes) {
+    const span = document.createElement('span');
+    span.className = 'card__layer-note';
+    span.textContent = displayMaterial(n.material);
+    targetEl.appendChild(span);
+  }
 }
 
 function projectionLabel(p) {
@@ -172,28 +194,25 @@ function projectionLabel(p) {
 }
 
 function renderCarte(c) {
-  // Set the liquid gradient + accent CSS variables from the palette
+  // Drive the AI palette through CSS vars + SVG gradient stops
   const root = document.documentElement;
   root.style.setProperty('--accent', c.design_tokens.palette.accent);
-
   $('#liquid-grad-top').setAttribute('stop-color', c.design_tokens.palette.liquid_top);
   $('#liquid-grad-bot').setAttribute('stop-color', c.design_tokens.palette.liquid_bottom);
 
-  // Dedicate to the client's name (echoed back by the server)
+  // Personalize the dedication
   const dedicateName = (c._client_name || state.name || 'Guest').toUpperCase();
   $('#card-dedicate-name').textContent = dedicateName;
 
   $('#card-name').textContent = c.name;
-  $('#card-tagline').textContent = c.tagline;
+  // The italic line under the script name is the user's own memory — what
+  // they entered on La confidence — not the AI's poetic tagline.
+  // (We still receive c.tagline in the payload for archive/debug use.)
+  $('#card-tagline').textContent = state.brief;
 
-  $('#card-top').textContent = formatNotes(c.top_notes);
-  $('#card-heart').textContent = formatNotes(c.heart_notes);
-  $('#card-base').textContent = formatNotes(c.base_notes);
-
-  // The pyramid layout renders as block lines — preserve newlines.
-  $$('.card__layer-notes').forEach(el => {
-    el.style.whiteSpace = 'pre-line';
-  });
+  renderLayerNotes($('#card-top'), c.top_notes);
+  renderLayerNotes($('#card-heart'), c.heart_notes);
+  renderLayerNotes($('#card-base'), c.base_notes);
 
   $('#card-mood').textContent = c.mood_word;
   $('#card-longevity').textContent = `${c.longevity_hours.toFixed(1)} hours`;

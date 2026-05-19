@@ -1,9 +1,36 @@
 /* ─────────────────────────────────────────────────────────────────────────
    Maison Sillage — stylesheet
    Pure neutrals (ink-on-paper) for the UI shell; AI-generated palette
-   only appears in the bottle liquid + card accent. Typography per
-   mockups: Italianno for the script, Inter for everything else.
+   only appears in the bottle liquid + card accent.
+   Typography: CS Maison Sezanne for the script, Switzer for everything else.
    ───────────────────────────────────────────────────────────────────── */
+
+/* ─── local webfonts ─────────────────────────────────────────────────── */
+@font-face {
+  font-family: 'Switzer';
+  src: url('./fonts/Switzer-Variable.ttf') format('truetype-variations'),
+       url('./fonts/Switzer-Variable.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Switzer';
+  src: url('./fonts/Switzer-VariableItalic.ttf') format('truetype-variations'),
+       url('./fonts/Switzer-VariableItalic.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Maison Sezanne';
+  src: url('./fonts/CS-MaisonSezanne-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
 
 /* ─── tokens ─────────────────────────────────────────────────────────── */
 :root {
@@ -16,8 +43,8 @@
   --muted-soft:   #C7C5C0;      /* placeholder text */
   --accent:       #1A1A1A;      /* default; overridden per composition */
 
-  --font-script:  'Italianno', 'Snell Roundhand', cursive;
-  --font-sans:    'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-script:  'Maison Sezanne', 'Snell Roundhand', cursive;
+  --font-sans:    'Switzer', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 
   --shadow-card:
       0 1px 2px rgba(20, 20, 20, 0.04),
@@ -83,22 +110,24 @@ body {
 }
 
 /* ─── monogram ───────────────────────────────────────────────────────── */
+/* The monogram is an SVG asset in /media/ms-monogram.svg. Wrapper sizes
+   it; the <img> fills the wrapper width. */
 .ms-monogram {
-  font-family: var(--font-script);
-  font-size: 56px;
-  line-height: 1;
+  width: 96px;
+  height: auto;
+  line-height: 0;
   color: var(--ink);
-  letter-spacing: -0.02em;
   user-select: none;
 }
 
 .ms-monogram--large {
-  font-size: 128px;
+  width: 200px;
 }
 
 .ms-monogram__mark {
-  display: inline-block;
-  transform: rotate(-3deg);
+  display: block;
+  width: 100%;
+  height: auto;
 }
 
 /* ─── typography ─────────────────────────────────────────────────────── */
@@ -353,33 +382,57 @@ body {
   min-height: 1.6em;
 }
 
-/* ─── la carte layout (placeholder — refined in Step 5) ──────────────── */
+/* ─── la carte: layout shell ─────────────────────────────────────────── */
 .carte-layout {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 64px;
-  align-items: center;
+  column-gap: 80px;
+  row-gap: 32px;
+  align-items: start;
   width: 100%;
-  max-width: 1080px;
+  max-width: 1100px;
 }
 
 .carte-header {
   grid-column: 1 / -1;
   text-align: center;
-  margin-bottom: 16px;
+  margin-bottom: 8px;
+}
+
+.carte-header .display {
+  font-weight: 500;
+  font-size: 26px;
+  letter-spacing: -0.005em;
+}
+
+.carte-header .body {
+  margin: 8px auto 0;
+  color: var(--ink-soft);
+  font-size: 15px;
 }
 
 .carte-bottle-col {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 24px;
+  justify-content: center;
+  gap: 36px;
+  padding-top: 24px;
 }
 
+.bottle-line--reveal {
+  width: 220px;
+  height: auto;
+}
+
+/* ─── la carte: the card itself ──────────────────────────────────────── */
 .card {
+  width: 100%;
+  max-width: 440px;
+  justify-self: start;
   background: var(--paper-card);
   border: 1px solid var(--ink);
-  padding: 40px 44px 28px;
+  padding: 44px 48px 32px;
   box-shadow: var(--shadow-card);
   display: flex;
   flex-direction: column;
@@ -389,97 +442,117 @@ body {
 }
 
 .card__seal {
-  width: 56px;
-  height: 56px;
+  width: 62px;
+  height: 62px;
   border: 1px solid var(--ink);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 16px;
+  margin-bottom: 18px;
 }
 
 .card__seal-mark {
-  font-family: var(--font-script);
-  font-size: 26px;
-  line-height: 1;
-  color: var(--ink);
-  transform: rotate(-3deg);
+  display: block;
+  width: 38px;
+  height: auto;
 }
 
 .card__dedication {
   font-size: 11px;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.22em;
   color: var(--ink);
   margin-bottom: 14px;
 }
 
 .card__stars {
-  font-size: 13px;
-  letter-spacing: 0.6em;
-  color: var(--ink);
-  margin: 8px 0;
+  display: block;
+  width: 56px;
+  height: auto;
+  margin: 8px 0 2px;
+  user-select: none;
 }
 
 .card__name {
   font-family: var(--font-script);
-  font-size: 56px;
+  font-size: 76px;
   font-weight: 400;
   line-height: 1;
   color: var(--accent);
-  margin: 12px 0 8px;
+  margin: 18px 0 8px;
+  letter-spacing: -0.02em;
 }
 
 .card__tagline {
   font-style: italic;
-  font-size: 13px;
+  font-size: 12.5px;
+  line-height: 1.5;
   color: var(--ink-soft);
   max-width: 280px;
-  margin-bottom: 24px;
+  margin: 0 0 28px;
 }
 
+/* The pyramid panel — light-grey background, three columns, one note
+   per line. The columns are independent (their heights can differ when
+   one layer has more notes). */
 .card__pyramid {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
-  gap: 18px;
+  gap: 14px;
   width: 100%;
-  background: rgba(26, 26, 26, 0.04);
-  padding: 18px 14px;
-  margin: 4px 0 24px;
+  background: rgba(26, 26, 26, 0.05);
+  padding: 22px 14px;
+  margin: 0 0 28px;
   text-align: center;
+}
+
+.card__layer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
 }
 
 .card__layer-label {
   font-size: 10px;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.22em;
   color: var(--muted);
-  margin-bottom: 6px;
   font-weight: 500;
 }
 
 .card__layer-notes {
-  font-size: 12px;
-  line-height: 1.45;
+  font-size: 11px;
+  line-height: 1.7;
   color: var(--ink);
-  letter-spacing: 0.04em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 
+.card__layer-note {
+  display: block;
+}
+
+/* Attribute pairs — 2x2 grid, label above value, generous gap. */
 .card__attrs {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 16px 24px;
+  gap: 22px 36px;
   width: 100%;
-  margin-bottom: 16px;
+  margin-bottom: 20px;
   text-align: left;
+  padding: 0 4px;
 }
 
 .card__attr dt {
   font-size: 10px;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.22em;
   color: var(--muted);
   font-weight: 500;
-  margin-bottom: 2px;
+  margin-bottom: 4px;
 }
 
 .card__attr dd {
@@ -489,22 +562,24 @@ body {
 }
 
 .card__edition {
+  font-style: italic;
   font-size: 13px;
   color: var(--ink);
-  margin-top: 4px;
+  margin-top: 6px;
 }
 
 .card__cities {
   font-size: 11px;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.22em;
   color: var(--ink);
-  margin-bottom: 14px;
+  margin: 4px 0 16px;
 }
 
 .card__footnote {
   font-style: italic;
   font-size: 10px;
   color: var(--muted);
+  letter-spacing: 0.02em;
 }
 
 /* ─── toast / inline error ────────────────────────────────────────────── */
@@ -529,23 +604,27 @@ body {
 }
 
 /* ─── responsive ─────────────────────────────────────────────────────── */
-@media (max-width: 800px) {
-  .ms-monogram--large { font-size: 96px; }
+@media (max-width: 900px) {
+  .ms-monogram--large { width: 160px; }
   .display { font-size: 24px; }
   .display--lg { font-size: 30px; }
   .carte-layout {
     grid-template-columns: 1fr;
-    gap: 32px;
+    column-gap: 0;
+    row-gap: 32px;
+    justify-items: center;
   }
-  .card { padding: 32px 24px 24px; }
-  .card__name { font-size: 48px; }
+  .carte-bottle-col { padding-top: 0; }
+  .card { justify-self: center; padding: 36px 32px 28px; }
+  .card__name { font-size: 60px; }
+  .bottle-line--reveal { width: 180px; }
 }
 
 @media (max-width: 520px) {
   .screen { padding: 32px 16px; }
   .stack { gap: 24px; }
-  .ms-monogram { font-size: 44px; }
-  .ms-monogram--large { font-size: 80px; }
+  .ms-monogram { width: 72px; }
+  .ms-monogram--large { width: 128px; }
   .tag-row {
     flex-direction: column;
     width: 100%;
@@ -556,8 +635,11 @@ body {
     text-align: left;
   }
   .tag:last-child { border-bottom: none; }
+  .card { padding: 32px 24px 24px; }
+  .card__name { font-size: 56px; }
   .card__pyramid {
-    grid-template-columns: 1fr;
-    text-align: left;
+    padding: 18px 10px;
+    gap: 8px;
   }
+  .card__attrs { gap: 18px 20px; }
 }
