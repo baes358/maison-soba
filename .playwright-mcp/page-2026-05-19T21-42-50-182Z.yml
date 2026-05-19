@@ -1,0 +1,53 @@
+- generic [ref=e88]:
+  - generic [ref=e89]:
+    - heading "III. La carte" [level=2] [ref=e90]
+    - paragraph [ref=e91]: The card composed for you.
+  - generic [ref=e92]:
+    - img [ref=e93]
+    - button "archive" [ref=e99] [cursor=pointer]
+    - link "new composition →" [ref=e100] [cursor=pointer]:
+      - /url: "#"
+  - article [ref=e101]:
+    - paragraph [ref=e103]: AN ORIGINAL COMPOSITION FOR SOBA
+    - img [ref=e104]
+    - heading "Velvet Iris" [level=3] [ref=e105]
+    - paragraph [ref=e106]: An iris bloom on a cool morning in March, before the dew has lifted.
+    - generic [ref=e107]:
+      - generic [ref=e108]:
+        - term [ref=e109]: HEAD
+        - definition [ref=e110]:
+          - generic [ref=e111]: PINK PEPPER
+          - generic [ref=e112]: MANDARIN RED
+          - generic [ref=e113]: CARDAMOM
+      - generic [ref=e114]:
+        - term [ref=e115]: HEART
+        - definition [ref=e116]:
+          - generic [ref=e117]: ORRIS BUTTER
+          - generic [ref=e118]: ROSE OTTO
+          - generic [ref=e119]: HEDIONE
+          - generic [ref=e120]: MIMOSA
+      - generic [ref=e121]:
+        - term [ref=e122]: BASE
+        - definition [ref=e123]:
+          - generic [ref=e124]: SANDALWOOD
+          - generic [ref=e125]: AMBRETTOLIDE
+          - generic [ref=e126]: HELIOTROPIN
+          - generic [ref=e127]: TONKA BEAN
+          - generic [ref=e128]: ISO E SUPER
+    - generic [ref=e129]:
+      - generic [ref=e130]:
+        - term [ref=e131]: MOOD
+        - definition [ref=e132]: Tender
+      - generic [ref=e133]:
+        - term [ref=e134]: LONGEVITY
+        - definition [ref=e135]: 6.5 hours
+      - generic [ref=e136]:
+        - term [ref=e137]: PROJECTION
+        - definition [ref=e138]: Intimate
+      - generic [ref=e139]:
+        - term [ref=e140]: INTENSITY
+        - definition [ref=e141]: 48%
+    - img [ref=e142]
+    - paragraph [ref=e143]: Edition N° 88
+    - paragraph [ref=e144]: PARIS | NEW YORK
+    - paragraph [ref=e145]: A composition by a patient intelligence, trained in perfumery.

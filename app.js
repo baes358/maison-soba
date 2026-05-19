@@ -8,6 +8,8 @@
 // Composition is fetched from the same-origin /api/generate function;
 // no API keys live in the browser.
 
+import { setBottleShape } from './bottles.js?v=2';
+
 // ─── tag labels (display-only; server validates against canonical set) ──
 // Mirror of /api/lib/tags.js minus the constraint strings.
 const TAG_LABELS = {
@@ -200,6 +202,9 @@ function renderCarte(c) {
   $('#liquid-grad-top').setAttribute('stop-color', c.design_tokens.palette.liquid_top);
   $('#liquid-grad-bot').setAttribute('stop-color', c.design_tokens.palette.liquid_bottom);
 
+  // Render the AI's chosen bottle silhouette
+  setBottleShape($('#reveal-bottle'), c.design_tokens.bottle_shape);
+
   // Personalize the dedication
   const dedicateName = (c._client_name || state.name || 'Guest').toUpperCase();
   $('#card-dedicate-name').textContent = dedicateName;
@@ -326,6 +331,12 @@ function handleReset() {
 // ─── boot ───────────────────────────────────────────────────────────────
 function boot() {
   renderTags();
+
+  // Draw the loading-screen bottle once at boot. Monolith is the default
+  // silhouette during anchoring — we don't yet know what shape the AI
+  // will pick. The shape on the reveal screen gets set when the composition
+  // returns.
+  setBottleShape($('#anchoring-bottle'), 'monolith');
 
   // Wire actions
   $$('[data-action="begin"]').forEach(b => b.addEventListener('click', handleBegin));

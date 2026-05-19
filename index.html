@@ -139,25 +139,19 @@
         <img src="media/ms-monogram.svg" alt="Maison Sillage" class="ms-monogram__mark">
       </div>
 
-      <!-- Placeholder line bottle. Step 6 replaces this with the full
-           hand-drawn library; for now a simple monolith silhouette. -->
+      <!-- Bottle silhouette during loading. The shape defaults to monolith
+           (set in CSS / app.js); the AI's chosen shape lands on the reveal
+           screen, not here. No liquid is drawn while the composition is
+           still being macerated. -->
       <svg
         class="bottle-line"
+        id="anchoring-bottle"
         viewBox="0 0 120 200"
         xmlns="http://www.w3.org/2000/svg"
         aria-hidden="true">
-        <g fill="none" stroke="currentColor" stroke-width="1.2"
-           stroke-linecap="round" stroke-linejoin="round">
-          <!-- cap -->
-          <rect x="46" y="20" width="28" height="22" rx="1"/>
-          <!-- neck -->
-          <line x1="50" y1="42" x2="50" y2="52"/>
-          <line x1="70" y1="42" x2="70" y2="52"/>
-          <!-- body -->
-          <rect x="28" y="52" width="64" height="120" rx="3"/>
-          <!-- subtle inner liquid line (drawn but not filled in the loading state) -->
-          <path d="M 32 130 Q 60 126 88 130" opacity="0.45"/>
-        </g>
+        <g data-bottle-strokes
+           fill="none" stroke="currentColor" stroke-width="1.2"
+           stroke-linecap="round" stroke-linejoin="round"></g>
       </svg>
 
       <p class="loading-line" id="loading-line">Consulting the organ…</p>
@@ -176,6 +170,9 @@
       </header>
 
       <div class="carte-bottle-col">
+        <!-- Final bottle. The body shape (clipPath + strokes) is set by
+             app.js based on composition.design_tokens.bottle_shape. The
+             liquid gradient stops are set from the AI palette. -->
         <svg
           class="bottle-line bottle-line--reveal"
           viewBox="0 0 120 200"
@@ -184,23 +181,17 @@
           id="reveal-bottle">
           <defs>
             <linearGradient id="liquid-grad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" id="liquid-grad-top" stop-color="#d8a26b"/>
+              <stop offset="0%"   id="liquid-grad-top" stop-color="#d8a26b"/>
               <stop offset="100%" id="liquid-grad-bot" stop-color="#7a2a3a"/>
             </linearGradient>
-            <clipPath id="liquid-clip">
-              <rect x="28" y="52" width="64" height="120" rx="3"/>
-            </clipPath>
+            <clipPath id="liquid-clip" data-bottle-clip></clipPath>
           </defs>
           <g clip-path="url(#liquid-clip)">
-            <rect id="reveal-liquid" x="28" y="100" width="64" height="72" fill="url(#liquid-grad)"/>
+            <rect id="reveal-liquid" x="0" y="100" width="120" height="72" fill="url(#liquid-grad)"/>
           </g>
-          <g fill="none" stroke="currentColor" stroke-width="1.2"
-             stroke-linecap="round" stroke-linejoin="round">
-            <rect x="46" y="20" width="28" height="22" rx="1"/>
-            <line x1="50" y1="42" x2="50" y2="52"/>
-            <line x1="70" y1="42" x2="70" y2="52"/>
-            <rect x="28" y="52" width="64" height="120" rx="3"/>
-          </g>
+          <g data-bottle-strokes
+             fill="none" stroke="currentColor" stroke-width="1.2"
+             stroke-linecap="round" stroke-linejoin="round"></g>
         </svg>
 
         <button class="btn btn--small" data-action="archive">archive</button>
@@ -254,6 +245,6 @@
   <!-- Inline error banner — fades in over whatever screen is active. -->
   <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 
-  <script type="module" src="app.js?v=2"></script>
+  <script type="module" src="app.js?v=3"></script>
 </body>
 </html>
