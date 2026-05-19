@@ -29,13 +29,15 @@ export const BOTTLES = {
 
   // ─── 2. FACET — hexagonal/diamond ───────────────────────────────────
   // Crystalline, modern: aldehydics, aquatics, mineral compositions.
+  // The body's top is a small flat shoulder (50→70 at y=56) so the neck
+  // lines have something to rest on instead of a sharp apex.
   facet: {
-    clip: `<polygon points="60,56 92,84 92,144 60,172 28,144 28,84"/>`,
+    clip: `<polygon points="50,56 70,56 92,84 92,144 60,172 28,144 28,84"/>`,
     strokes: `
       <polygon points="50,20 70,20 76,26 76,38 70,44 50,44 44,38 44,26"/>
       <line x1="52" y1="44" x2="52" y2="56"/>
       <line x1="68" y1="44" x2="68" y2="56"/>
-      <polygon points="60,56 92,84 92,144 60,172 28,144 28,84"/>
+      <polygon points="50,56 70,56 92,84 92,144 60,172 28,144 28,84"/>
       <line x1="28" y1="114" x2="92" y2="114" stroke-opacity="0.35"/>
     `
   },
@@ -55,13 +57,13 @@ export const BOTTLES = {
   // ─── 4. ORB — spherical ─────────────────────────────────────────────
   // Soft, romantic, full: lush florals, rose-led, gourmand fruit.
   orb: {
-    clip: `<circle cx="60" cy="116" r="56"/>`,
+    clip: `<circle cx="60" cy="114" r="56"/>`,
     strokes: `
       <rect x="50" y="20" width="20" height="14" rx="1"/>
-      <line x1="52" y1="34" x2="52" y2="50"/>
-      <line x1="68" y1="34" x2="68" y2="50"/>
-      <line x1="48" y1="50" x2="72" y2="50"/>
-      <circle cx="60" cy="116" r="56"/>
+      <line x1="52" y1="34" x2="52" y2="58"/>
+      <line x1="68" y1="34" x2="68" y2="58"/>
+      <line x1="48" y1="58" x2="72" y2="58"/>
+      <circle cx="60" cy="114" r="56"/>
     `
   },
 
@@ -79,14 +81,16 @@ export const BOTTLES = {
 
   // ─── 6. STONE — round-squat / river-stone ───────────────────────────
   // Grounded, earthy, animalic: deep woods, ouds, leathers, vetiver-led.
+  // Body is an ellipse so its top curves up to meet the neck instead of
+  // sitting on a square shoulder.
   stone: {
-    clip: `<rect x="14" y="76" width="92" height="96" rx="40"/>`,
+    clip: `<ellipse cx="60" cy="112" rx="48" ry="60"/>`,
     strokes: `
       <rect x="44" y="20" width="32" height="14" rx="1"/>
-      <line x1="48" y1="34" x2="48" y2="50"/>
-      <line x1="72" y1="34" x2="72" y2="50"/>
-      <line x1="40" y1="50" x2="80" y2="50"/>
-      <rect x="14" y="76" width="92" height="96" rx="40"/>
+      <line x1="48" y1="34" x2="48" y2="52"/>
+      <line x1="72" y1="34" x2="72" y2="52"/>
+      <line x1="40" y1="52" x2="80" y2="52"/>
+      <ellipse cx="60" cy="112" rx="48" ry="60"/>
     `
   }
 };
