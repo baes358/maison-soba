@@ -169,10 +169,61 @@ function validateComposition(c) {
   const baseErr = validateNotes(c.base_notes, 'base_notes', [25, 50]);
   if (baseErr) return baseErr;
 
+  // Total must equal 100. Sonnet often drifts a few points low or high
+  // despite the worked example in the prompt — if it's close enough, we
+  // auto-correct in a way that avoids burning an extra round-trip.
+  //
+  // Strategy: walk every note in descending pct, base section first
+  // (the formula's natural fixative absorbers), then heart, then top.
+  // The first note that can absorb the full drift without violating its
+  // own typical_pct_range AND without pushing its section out of band
+  // wins. This converts most near-misses into first-attempt successes,
+  // saving a Sonnet call (~$0.03 + ~12s) per affected composition.
   const totalPct = [...c.top_notes, ...c.heart_notes, ...c.base_notes]
     .reduce((s, n) => s + n.pct, 0);
-  if (Math.abs(totalPct - 100) > 1) {
-    return `Total pct is ${totalPct}, must equal 100.`;
+
+  if (totalPct !== 100) {
+    const diff = 100 - totalPct;
+
+    // Only rescue near-misses (±10). Larger drift means the composition
+    // is too far off — retry with a corrective message.
+    if (Math.abs(diff) > 10) {
+      return `Total pct is ${totalPct}, must equal 100.`;
+    }
+
+    const sections = [
+      { notes: c.base_notes,  name: 'base',  bounds: [25, 50] },
+      { notes: c.heart_notes, name: 'heart', bounds: [30, 50] },
+      { notes: c.top_notes,   name: 'top',   bounds: [15, 30] }
+    ];
+
+    let absorbed = false;
+    for (const section of sections) {
+      const sectionSum = section.notes.reduce((s, n) => s + n.pct, 0);
+      const newSectionSum = sectionSum + diff;
+      if (newSectionSum < section.bounds[0] || newSectionSum > section.bounds[1]) {
+        continue; // This section can't take the change without going out of band.
+      }
+      // Try each note in this section, largest first.
+      const candidates = section.notes.slice().sort((a, b) => b.pct - a.pct);
+      for (const note of candidates) {
+        const newPct = note.pct + diff;
+        if (newPct < 1) continue; // Don't drive any note to zero.
+        const matRange = MATERIALS_BY_NAME
+          .get(note.material.toLowerCase())?.typical_pct_range;
+        if (matRange && (newPct < matRange[0] || newPct > matRange[1])) continue;
+
+        console.log(`[auto-correct] total was ${totalPct}; nudged ${note.material} (${section.name}) from ${note.pct}% to ${newPct}% to reach 100.`);
+        note.pct = newPct;
+        absorbed = true;
+        break;
+      }
+      if (absorbed) break;
+    }
+
+    if (!absorbed) {
+      return `Total drift ${diff} cannot be absorbed without violating section bounds or material ranges.`;
+    }
   }
 
   if (typeof c.longevity_hours !== 'number' || c.longevity_hours < 2 || c.longevity_hours > 14) {
