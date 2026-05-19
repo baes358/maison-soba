@@ -17,3 +17,5 @@ out/
 # OS / editor
 .DS_Store
 *.log
+.vercel
+.env*.local

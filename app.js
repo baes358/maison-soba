@@ -243,8 +243,24 @@ async function generate() {
     body: JSON.stringify(body)
   });
 
+  // If the response isn't JSON, the function isn't running (most common
+  // cause: testing with a plain static server instead of `vercel dev`,
+  // which makes /api/generate 404 with an HTML page). Surface that as a
+  // specific message instead of the generic "unreadable" fallback.
+  const contentType = res.headers.get('content-type') || '';
+  if (!contentType.includes('application/json')) {
+    if (res.status === 404) {
+      throw new Error('The composition endpoint is not running. If you are testing locally, use `vercel dev` instead of a static server.');
+    }
+    throw new Error(`Unexpected response from the atelier (HTTP ${res.status}).`);
+  }
+
   let data;
-  try { data = await res.json(); } catch { data = { error: 'bad_response', message: 'Unreadable response from the atelier.' }; }
+  try {
+    data = await res.json();
+  } catch {
+    throw new Error('Unreadable JSON from the atelier. Check the function logs.');
+  }
 
   if (!res.ok) {
     throw new Error(data.message || `Request failed (${res.status}).`);
