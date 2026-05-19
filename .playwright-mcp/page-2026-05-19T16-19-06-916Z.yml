@@ -1,0 +1,46 @@
+- generic [ref=e42]:
+  - generic "Maison Sillage" [ref=e43]:
+    - generic [ref=e44]: MS
+  - heading "II. La composition" [level=2] [ref=e45]
+  - paragraph [ref=e46]: "Build the three layers: head, heart, and base."
+  - generic [ref=e47]:
+    - group "THE HEAD what rises first." [ref=e48]:
+      - generic [ref=e49]:
+        - generic [ref=e50]: THE HEAD
+        - generic [ref=e51]: what rises first.
+      - radiogroup "Head" [ref=e52]:
+        - radio "citrus" [ref=e53] [cursor=pointer]
+        - radio "green" [ref=e54] [cursor=pointer]
+        - radio "aldehydic" [ref=e55] [cursor=pointer]
+        - radio "aromatic" [ref=e56] [cursor=pointer]
+        - radio "marine" [ref=e57] [cursor=pointer]
+        - radio "spice" [ref=e58] [cursor=pointer]
+        - radio "fruit" [ref=e59] [cursor=pointer]
+    - group "THE HEART what unfolds." [ref=e60]:
+      - generic [ref=e61]:
+        - generic [ref=e62]: THE HEART
+        - generic [ref=e63]: what unfolds.
+      - radiogroup "Heart" [ref=e64]:
+        - radio "floral" [ref=e65] [cursor=pointer]
+        - radio "iris" [ref=e66] [cursor=pointer]
+        - radio "rose" [ref=e67] [cursor=pointer]
+        - radio "powder" [ref=e68] [cursor=pointer]
+        - radio "tea" [ref=e69] [cursor=pointer]
+        - radio "honey" [ref=e70] [cursor=pointer]
+        - radio "tobacco" [ref=e71] [cursor=pointer]
+    - group "THE BASE what remains." [ref=e72]:
+      - generic [ref=e73]:
+        - generic [ref=e74]: THE BASE
+        - generic [ref=e75]: what remains.
+      - radiogroup "Base" [ref=e76]:
+        - radio "wood" [ref=e77] [cursor=pointer]
+        - radio "smoke" [ref=e78] [cursor=pointer]
+        - radio "amber" [ref=e79] [cursor=pointer]
+        - radio "leather" [ref=e80] [cursor=pointer]
+        - radio "oud" [ref=e81] [cursor=pointer]
+        - radio "vanilla" [ref=e82] [cursor=pointer]
+        - radio "musk" [ref=e83] [cursor=pointer]
+        - radio "incense" [ref=e84] [cursor=pointer]
+    - button "macerate →" [disabled] [ref=e85]:
+      - text: macerate
+      - generic [ref=e86]: →

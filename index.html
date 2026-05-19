@@ -1,435 +1,261 @@
 <!DOCTYPE html>
-<html lang="fr">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>MAISON Sillage — Atelier de Parfum Digital</title>
-        <link rel="stylesheet" href="style.css">
-        
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Maison Sillage — Digital Perfume Workshop</title>
 
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Italianno&display=swap" rel="stylesheet">
 
-    </head>
+  <link rel="stylesheet" href="reset.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
 
-    <body>
+  <!-- ─────────────────────────────── LANDING ─────────────────────────────── -->
+  <section class="screen screen--landing active" data-screen="landing">
+    <div class="stack stack--center">
+      <div class="ms-monogram ms-monogram--large" aria-label="Maison Sillage">
+        <span class="ms-monogram__mark">MS</span>
+      </div>
+      <h1 class="display display--lg">compose to linger.</h1>
+      <p class="body body--lead">
+        Maison Sillage is a workshop where you compose your own olfactive signature,
+        guided by matière, attuned to memory.
+      </p>
+      <button class="btn" data-action="begin">begin</button>
+    </div>
+  </section>
 
-        <!-- ═══════════════════════ LANDING -->
-        <div class="screen active" id="screen-landing">
-        <div class="brand-mark"><span class="fr"><span class="fr-text">Établi</span><span class="fr-en">Founded</span></span> · 2026</div>
-        <div class="main-logo">Maison Sillage</div>
-        <div class="sub-logo"><span class="fr"><span class="fr-text">Atelier de Parfum Digital</span><span class="fr-en">Digital Fragrance Studio</span></span></div>
-        <div class="hairline"></div>
-        <div class="tagline">Compose to linger.</div>
-        <button class="btn-primary" onclick="goTo('compose')"><span class="fr"><span class="fr-text">Composer un Parfum</span><span class="fr-en">Create a Fragrance</span></span></button>
-        </div>
+  <!-- ───────────────────────────── THE METHOD ────────────────────────────── -->
+  <section class="screen screen--method" data-screen="method">
+    <div class="stack stack--center stack--wide">
+      <div class="ms-monogram" aria-label="Maison Sillage">
+        <span class="ms-monogram__mark">MS</span>
+      </div>
+      <h2 class="display">the method.</h2>
+      <p class="body body--lead">
+        Each composition is a suggestion,<br>
+        formulated by an intelligence trained in perfumery.
+      </p>
 
-        <!-- ═══════════════════════ COMPOSE -->
-        <div class="screen" id="screen-compose">
-        <div class="compose-inner">
-        <div class="compose-header">
-            <div class="compose-title"><span class="fr"><span class="fr-text">La Composition</span><span class="fr-en">The Composition</span></span></div>
-            <div class="compose-sub"><span class="fr"><span class="fr-text">Quelques touches pour guider l'atelier…</span><span class="fr-en">A few touches to guide the studio…</span></span></div>
-        </div>
+      <ol class="method-list">
+        <li class="method-list__item">
+          <div class="method-list__title">I. La confidence</div>
+          <div class="method-list__body"><em>You describe a place, an hour, a memory.</em></div>
+        </li>
+        <li class="method-list__item">
+          <div class="method-list__title">II. La composition</div>
+          <div class="method-list__body"><em>We compose the matière — head, heart, base — by the laws of perfumery.</em></div>
+        </li>
+        <li class="method-list__item">
+          <div class="method-list__title">III. La carte</div>
+          <div class="method-list__body"><em>A formula, a sillage. A unique edition for yours truly.</em></div>
+        </li>
+      </ol>
 
-        <div class="field-group">
-            <label class="field-label"><span class="fr"><span class="fr-text">Humeur</span><span class="fr-en">Mood</span></span></label>
-            <div class="slider-wrap">
-            <div class="slider-labels">
-                <span class="slider-label"><span class="fr"><span class="fr-text">Tendre</span><span class="fr-en">Tender</span></span></span>
-                <span class="slider-label"><span class="fr"><span class="fr-text">Audacieux</span><span class="fr-en">Daring</span></span></span>
-            </div>
-            <input type="range" id="mood" min="0" max="100" value="50">
-            </div>
-        </div>
+      <button class="btn" data-action="continue">continue</button>
+    </div>
+  </section>
 
-        <div class="field-group">
-            <label class="field-label"><span class="fr"><span class="fr-text">Moment</span><span class="fr-en">Time of Day</span></span></label>
-            <div class="options-row">
-            <button class="option-btn selected" data-group="time" data-val="Jour"><span class="fr"><span class="fr-text">Jour</span><span class="fr-en">Day</span></span></button>
-            <button class="option-btn" data-group="time" data-val="Soir"><span class="fr"><span class="fr-text">Soir</span><span class="fr-en">Evening</span></span></button>
-            <button class="option-btn" data-group="time" data-val="Nuit"><span class="fr"><span class="fr-text">Nuit</span><span class="fr-en">Night</span></span></button>
-            </div>
-        </div>
+  <!-- ─────────────────────────── I. LA CONFIDENCE ─────────────────────────── -->
+  <section class="screen screen--confidence" data-screen="confidence">
+    <div class="stack stack--center">
+      <div class="ms-monogram" aria-label="Maison Sillage">
+        <span class="ms-monogram__mark">MS</span>
+      </div>
+      <h2 class="display">I. La confidence</h2>
+      <p class="body">Entrust us with a memory.</p>
 
-        <div class="field-group">
-            <label class="field-label">Texture</label>
-            <div class="options-row">
-            <button class="option-btn selected" data-group="texture" data-val="Frais"><span class="fr"><span class="fr-text">Frais</span><span class="fr-en">Fresh</span></span></button>
-            <button class="option-btn" data-group="texture" data-val="Boisé"><span class="fr"><span class="fr-text">Boisé</span><span class="fr-en">Woody</span></span></button>
-            <button class="option-btn" data-group="texture" data-val="Épicé"><span class="fr"><span class="fr-text">Épicé</span><span class="fr-en">Spiced</span></span></button>
-            <button class="option-btn" data-group="texture" data-val="Ambré"><span class="fr"><span class="fr-text">Ambré</span><span class="fr-en">Amber</span></span></button>
-            </div>
-        </div>
+      <form class="form-confidence" id="form-confidence" autocomplete="off" novalidate>
+        <input
+          type="text"
+          name="name"
+          id="input-name"
+          class="input input--single"
+          placeholder="Name"
+          maxlength="60"
+          required>
+        <textarea
+          name="brief"
+          id="input-brief"
+          class="input input--memory"
+          placeholder="A place, an hour, a presence…"
+          maxlength="500"
+          rows="3"
+          required></textarea>
+        <p class="form-help">Describe it as you remember. The more particular, the better.</p>
 
-        <div class="field-group">
-            <label class="field-label"><span class="fr"><span class="fr-text">Nom (optionnel)</span><span class="fr-en">Name (optional)</span></span></label>
-            <input type="text" class="text-input" id="fragrance-name-input" placeholder="Le titre de votre parfum…" maxlength="40">
-        </div>
+        <button type="submit" class="btn">entrust <span class="btn__arrow">→</span></button>
+      </form>
+    </div>
+  </section>
 
-        <div class="compose-actions">
-            <button class="btn-ghost" onclick="goTo('landing')">← <span class="fr"><span class="fr-text">Retour</span><span class="fr-en">Back</span></span></button>
-            <button class="btn-primary" onclick="startGeneration()"><span class="fr"><span class="fr-text">Macérer</span><span class="fr-en">Infuse</span></span> →</button>
-        </div>
-        </div>
-        </div>
+  <!-- ───────────────────────── II. LA COMPOSITION ──────────────────────────── -->
+  <section class="screen screen--composition" data-screen="composition">
+    <div class="stack stack--center stack--wide">
+      <div class="ms-monogram" aria-label="Maison Sillage">
+        <span class="ms-monogram__mark">MS</span>
+      </div>
+      <h2 class="display">II. La composition</h2>
+      <p class="body">Build the three layers: head, heart, and base.</p>
 
-        <!-- ═══════════════════════ GENERATING -->
-        <div class="screen" id="screen-generating">
-        <svg class="bottle-silhouette" viewBox="0 0 120 230" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-            <!-- Drop shadow filter -->
-            <filter id="genShadow" x="-30%" y="-10%" width="160%" height="130%">
-                <feDropShadow dx="0" dy="12" stdDeviation="10" flood-color="rgba(28,24,20,0.18)"/>
-            </filter>
+      <form class="form-composition" id="form-composition">
+        <fieldset class="tag-group" data-layer="head">
+          <legend class="tag-group__legend">
+            <span class="tag-group__title">THE HEAD</span>
+            <span class="tag-group__sub">what rises first.</span>
+          </legend>
+          <div class="tag-row" role="radiogroup" aria-label="Head"></div>
+        </fieldset>
 
-            <!-- Body clip -->
-            <clipPath id="bottleClip">
-                <rect x="14" y="62" width="92" height="154" rx="10" ry="10"/>
+        <fieldset class="tag-group" data-layer="heart">
+          <legend class="tag-group__legend">
+            <span class="tag-group__title">THE HEART</span>
+            <span class="tag-group__sub">what unfolds.</span>
+          </legend>
+          <div class="tag-row" role="radiogroup" aria-label="Heart"></div>
+        </fieldset>
+
+        <fieldset class="tag-group" data-layer="base">
+          <legend class="tag-group__legend">
+            <span class="tag-group__title">THE BASE</span>
+            <span class="tag-group__sub">what remains.</span>
+          </legend>
+          <div class="tag-row" role="radiogroup" aria-label="Base"></div>
+        </fieldset>
+
+        <button type="submit" class="btn" id="btn-macerate" disabled>
+          macerate <span class="btn__arrow">→</span>
+        </button>
+      </form>
+    </div>
+  </section>
+
+  <!-- ──────────────────────────── ANCHORING (loading) ────────────────────── -->
+  <section class="screen screen--anchoring" data-screen="anchoring">
+    <div class="stack stack--center">
+      <div class="ms-monogram" aria-label="Maison Sillage">
+        <span class="ms-monogram__mark">MS</span>
+      </div>
+
+      <!-- Placeholder line bottle. Step 6 replaces this with the full
+           hand-drawn library; for now a simple monolith silhouette. -->
+      <svg
+        class="bottle-line"
+        viewBox="0 0 120 200"
+        xmlns="http://www.w3.org/2000/svg"
+        aria-hidden="true">
+        <g fill="none" stroke="currentColor" stroke-width="1.2"
+           stroke-linecap="round" stroke-linejoin="round">
+          <!-- cap -->
+          <rect x="46" y="20" width="28" height="22" rx="1"/>
+          <!-- neck -->
+          <line x1="50" y1="42" x2="50" y2="52"/>
+          <line x1="70" y1="42" x2="70" y2="52"/>
+          <!-- body -->
+          <rect x="28" y="52" width="64" height="120" rx="3"/>
+          <!-- subtle inner liquid line (drawn but not filled in the loading state) -->
+          <path d="M 32 130 Q 60 126 88 130" opacity="0.45"/>
+        </g>
+      </svg>
+
+      <p class="loading-line" id="loading-line">Consulting the organ…</p>
+    </div>
+  </section>
+
+  <!-- ───────────────────────── III. LA CARTE (result) ────────────────────── -->
+  <!-- The full elevated card layout lands in Step 5. This screen is wired
+       end-to-end so we can confirm the whole flow before polishing the
+       visual treatment. -->
+  <section class="screen screen--carte" data-screen="carte">
+    <div class="carte-layout">
+      <header class="carte-header">
+        <h2 class="display">III. La carte</h2>
+        <p class="body">The card composed for you.</p>
+      </header>
+
+      <div class="carte-bottle-col">
+        <svg
+          class="bottle-line bottle-line--reveal"
+          viewBox="0 0 120 200"
+          xmlns="http://www.w3.org/2000/svg"
+          aria-hidden="true"
+          id="reveal-bottle">
+          <defs>
+            <linearGradient id="liquid-grad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" id="liquid-grad-top" stop-color="#d8a26b"/>
+              <stop offset="100%" id="liquid-grad-bot" stop-color="#7a2a3a"/>
+            </linearGradient>
+            <clipPath id="liquid-clip">
+              <rect x="28" y="52" width="64" height="120" rx="3"/>
             </clipPath>
-
-            <!-- Glass: multi-stop horizontal gradient for depth -->
-            <linearGradient id="glassGrad" x1="0" y1="0" x2="1" y2="0">
-                <stop offset="0%"    stop-color="#a8998a" stop-opacity="0.25"/>
-                <stop offset="8%"    stop-color="#ffffff" stop-opacity="0.55"/>
-                <stop offset="16%"   stop-color="#f0e8dc" stop-opacity="0.10"/>
-                <stop offset="50%"   stop-color="#e8dfd4" stop-opacity="0.04"/>
-                <stop offset="82%"   stop-color="#c8bfb0" stop-opacity="0.10"/>
-                <stop offset="93%"   stop-color="#ffffff" stop-opacity="0.22"/>
-                <stop offset="100%"  stop-color="#8a7d70" stop-opacity="0.28"/>
-            </linearGradient>
-
-            <!-- Glass tint: very faint warm vertical -->
-            <linearGradient id="glassTint" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%"   stop-color="#f8f2ea" stop-opacity="0.06"/>
-                <stop offset="100%" stop-color="#c8b89a" stop-opacity="0.12"/>
-            </linearGradient>
-
-            <!-- Neck gradient -->
-            <linearGradient id="neckGrad" x1="0" y1="0" x2="1" y2="0">
-                <stop offset="0%"   stop-color="#a0907e" stop-opacity="0.3"/>
-                <stop offset="30%"  stop-color="#ffffff" stop-opacity="0.5"/>
-                <stop offset="100%" stop-color="#8a7a68" stop-opacity="0.25"/>
-            </linearGradient>
-
-            <!-- Cap gradient: matte black with subtle sheen -->
-            <linearGradient id="capGrad" x1="0" y1="0" x2="1" y2="0">
-                <stop offset="0%"   stop-color="#0e0c0a"/>
-                <stop offset="30%"  stop-color="#2a2520"/>
-                <stop offset="70%"  stop-color="#1a1612"/>
-                <stop offset="100%" stop-color="#080604"/>
-            </linearGradient>
-            <linearGradient id="capTop" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%"   stop-color="#3a3028" stop-opacity="1"/>
-                <stop offset="100%" stop-color="#0a0806" stop-opacity="1"/>
-            </linearGradient>
-
-            <!-- Cap rim chrome line -->
-            <linearGradient id="rimGrad" x1="0" y1="0" x2="1" y2="0">
-                <stop offset="0%"   stop-color="#606060" stop-opacity="0.4"/>
-                <stop offset="30%"  stop-color="#d0c8be" stop-opacity="0.9"/>
-                <stop offset="70%"  stop-color="#b0a898" stop-opacity="0.6"/>
-                <stop offset="100%" stop-color="#505050" stop-opacity="0.3"/>
-            </linearGradient>
-            </defs>
-
-            <!-- ── SHADOW ── -->
-            <ellipse cx="60" cy="225" rx="36" ry="5" fill="rgba(28,24,20,0.12)"/>
-
-            <!-- ── BODY LIQUID (animated fill) ── -->
-            <g clip-path="url(#bottleClip)">
-            <!-- Liquid bg -->
-            <rect id="gen-liquid" x="14" y="216" width="92" height="0"
-                    fill="hsl(214,38%,68%)" opacity="0.52" class="bottle-liquid"/>
-            <!-- Liquid shimmer stripe -->
-            <rect id="gen-liquid-shine" x="24" y="216" width="8" height="0"
-                    fill="rgba(255,255,255,0.18)" class="bottle-liquid"/>
-            </g>
-
-            <!-- ── BODY BASE (glass fill) ── -->
-            <rect x="14" y="62" width="92" height="154" rx="10" ry="10"
-                fill="url(#glassTint)"/>
-
-            <!-- ── BODY GLASS SHEEN ── -->
-            <rect x="14" y="62" width="92" height="154" rx="10" ry="10"
-                fill="url(#glassGrad)"/>
-
-            <!-- ── BODY OUTLINE ── -->
-            <rect x="14" y="62" width="92" height="154" rx="10" ry="10"
-                stroke="#1c1814" stroke-width="0.7" fill="none" filter="url(#genShadow)"/>
-
-            <!-- ── LABEL PANEL ── -->
-            <rect x="22" y="124" width="76" height="60" rx="1"
-                fill="rgba(248,243,236,0.82)" stroke="rgba(140,128,115,0.25)" stroke-width="0.5"/>
-            <!-- Label inner border hairline -->
-            <rect x="26" y="128" width="68" height="52" rx="0.5"
-                fill="none" stroke="rgba(184,151,106,0.35)" stroke-width="0.4"/>
-
-            <!-- ── NECK ── -->
-            <rect x="42" y="44" width="36" height="20" rx="3" ry="3"
-                fill="url(#neckGrad)" stroke="#1c1814" stroke-width="0.6"/>
-            <!-- Neck inner shadow line -->
-            <line x1="43" y1="44" x2="43" y2="64" stroke="rgba(0,0,0,0.12)" stroke-width="1.5"/>
-            <line x1="77" y1="44" x2="77" y2="64" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
-
-            <!-- ── CAP ── -->
-            <rect x="34" y="14" width="52" height="32" rx="4" ry="4"
-                fill="url(#capGrad)"/>
-            <!-- Cap top face (slightly lighter) -->
-            <rect x="34" y="14" width="52" height="10" rx="4" ry="4"
-                fill="url(#capTop)"/>
-            <!-- Cap subtle side bevel -->
-            <rect x="34" y="14" width="3" height="32" rx="1"
-                fill="rgba(255,255,255,0.04)"/>
-            <!-- Cap bottom rim chrome -->
-            <rect x="33" y="43" width="54" height="2.5" rx="0.5"
-                fill="url(#rimGrad)"/>
-
-            <!-- ── REFLECTIONS on body ── -->
-            <!-- Primary left highlight -->
-            <rect x="20" y="68" width="6" height="140" rx="3"
-                fill="rgba(255,255,255,0.28)"/>
-            <!-- Secondary soft left highlight -->
-            <rect x="28" y="72" width="2" height="120" rx="1"
-                fill="rgba(255,255,255,0.10)"/>
-            <!-- Right edge glint -->
-            <rect x="98" y="74" width="4" height="100" rx="2"
-                fill="rgba(255,255,255,0.12)"/>
-            <!-- Top inner catch light arc -->
-            <ellipse cx="60" cy="70" rx="28" ry="4"
-                    fill="rgba(255,255,255,0.18)"/>
+          </defs>
+          <g clip-path="url(#liquid-clip)">
+            <rect id="reveal-liquid" x="28" y="100" width="64" height="72" fill="url(#liquid-grad)"/>
+          </g>
+          <g fill="none" stroke="currentColor" stroke-width="1.2"
+             stroke-linecap="round" stroke-linejoin="round">
+            <rect x="46" y="20" width="28" height="22" rx="1"/>
+            <line x1="50" y1="42" x2="50" y2="52"/>
+            <line x1="70" y1="42" x2="70" y2="52"/>
+            <rect x="28" y="52" width="64" height="120" rx="3"/>
+          </g>
         </svg>
 
-        <div class="gen-text shimmer" id="gen-text">Infusing top notes…</div>
-        <div class="gen-steps" id="gen-steps">— <span class="fr"><span class="fr-text">atelier de parfum</span><span class="fr-en">fragrance studio</span></span> —</div>
+        <button class="btn btn--small" data-action="archive">archive</button>
+        <a class="link link--quiet" href="#" data-action="reset">new composition →</a>
+      </div>
+
+      <article class="card" id="fragrance-card">
+        <div class="card__seal" aria-hidden="true">
+          <span class="card__seal-mark">MS</span>
         </div>
 
-        <!-- ═══════════════════════ REVEAL -->
-        <div class="screen" id="screen-reveal">
-        <div class="reveal-bottle-col">
-            <svg class="reveal-bottle" width="180" height="345" viewBox="0 0 120 230" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-                <!-- Drop shadow -->
-                <filter id="revealShadow" x="-30%" y="-10%" width="160%" height="130%">
-                <feDropShadow dx="0" dy="14" stdDeviation="12" flood-color="rgba(28,24,20,0.20)"/>
-                </filter>
+        <p class="card__dedication">AN ORIGINAL COMPOSITION FOR <span id="card-dedicate-name">SOBA</span></p>
 
-                <!-- Body clip -->
-                <clipPath id="bottleClipReveal">
-                <rect x="14" y="62" width="92" height="154" rx="10" ry="10"/>
-                </clipPath>
+        <div class="card__stars" aria-hidden="true">✶ ✶ ✶</div>
 
-                <!-- Glass: rich multi-stop horizontal -->
-                <linearGradient id="glassGradReveal" x1="0" y1="0" x2="1" y2="0">
-                <stop offset="0%"    stop-color="#a8998a" stop-opacity="0.28"/>
-                <stop offset="8%"    stop-color="#ffffff" stop-opacity="0.58"/>
-                <stop offset="16%"   stop-color="#f0e8dc" stop-opacity="0.08"/>
-                <stop offset="50%"   stop-color="#e8dfd4" stop-opacity="0.03"/>
-                <stop offset="82%"   stop-color="#c8bfb0" stop-opacity="0.09"/>
-                <stop offset="93%"   stop-color="#ffffff" stop-opacity="0.25"/>
-                <stop offset="100%"  stop-color="#8a7d70" stop-opacity="0.30"/>
-                </linearGradient>
+        <h3 class="card__name" id="card-name">Folded Light</h3>
+        <p class="card__tagline" id="card-tagline">A library in late autumn, and the smell of old paper and tea growing cold…</p>
 
-                <!-- Glass warm tint -->
-                <linearGradient id="glassTintReveal" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%"   stop-color="#f8f2ea" stop-opacity="0.07"/>
-                <stop offset="100%" stop-color="#c8b89a" stop-opacity="0.14"/>
-                </linearGradient>
+        <dl class="card__pyramid">
+          <div class="card__layer">
+            <dt class="card__layer-label">HEAD</dt>
+            <dd class="card__layer-notes" id="card-top">—</dd>
+          </div>
+          <div class="card__layer">
+            <dt class="card__layer-label">HEART</dt>
+            <dd class="card__layer-notes" id="card-heart">—</dd>
+          </div>
+          <div class="card__layer">
+            <dt class="card__layer-label">BASE</dt>
+            <dd class="card__layer-notes" id="card-base">—</dd>
+          </div>
+        </dl>
 
-                <!-- Liquid gradient -->
-                <linearGradient id="liquidGrad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%"   id="liquidTop" stop-color="hsl(214,38%,72%)" stop-opacity="0.28"/>
-                <stop offset="100%" id="liquidBot" stop-color="hsl(214,44%,48%)" stop-opacity="0.60"/>
-                </linearGradient>
-                <!-- Liquid side shine -->
-                <linearGradient id="liquidShine" x1="0" y1="0" x2="1" y2="0">
-                <stop offset="0%"  stop-color="rgba(255,255,255,0.22)"/>
-                <stop offset="30%" stop-color="rgba(255,255,255,0)"/>
-                </linearGradient>
+        <dl class="card__attrs">
+          <div class="card__attr"><dt>MOOD</dt><dd id="card-mood">—</dd></div>
+          <div class="card__attr"><dt>LONGEVITY</dt><dd id="card-longevity">—</dd></div>
+          <div class="card__attr"><dt>PROJECTION</dt><dd id="card-projection">—</dd></div>
+          <div class="card__attr"><dt>INTENSITY</dt><dd id="card-intensity">—</dd></div>
+        </dl>
 
-                <!-- Neck -->
-                <linearGradient id="neckGradReveal" x1="0" y1="0" x2="1" y2="0">
-                <stop offset="0%"   stop-color="#a0907e" stop-opacity="0.32"/>
-                <stop offset="30%"  stop-color="#ffffff" stop-opacity="0.52"/>
-                <stop offset="100%" stop-color="#8a7a68" stop-opacity="0.26"/>
-                </linearGradient>
+        <div class="card__stars" aria-hidden="true">✶ ✶ ✶</div>
 
-                <!-- Cap -->
-                <linearGradient id="capGradReveal" x1="0" y1="0" x2="1" y2="0">
-                <stop offset="0%"   stop-color="#0e0c0a"/>
-                <stop offset="28%"  stop-color="#2e2824"/>
-                <stop offset="68%"  stop-color="#1c1814"/>
-                <stop offset="100%" stop-color="#060402"/>
-                </linearGradient>
-                <linearGradient id="capTopReveal" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%"   stop-color="#3c3028"/>
-                <stop offset="100%" stop-color="#0a0806"/>
-                </linearGradient>
+        <p class="card__edition" id="card-edition">Edition N° —</p>
+        <p class="card__cities">PARIS &nbsp;|&nbsp; NEW YORK</p>
+        <p class="card__footnote">A composition by a patient intelligence, trained in perfumery.</p>
+      </article>
+    </div>
+  </section>
 
-                <!-- Chrome rim -->
-                <linearGradient id="rimGradReveal" x1="0" y1="0" x2="1" y2="0">
-                <stop offset="0%"   stop-color="#505050" stop-opacity="0.35"/>
-                <stop offset="28%"  stop-color="#d8d0c4" stop-opacity="0.95"/>
-                <stop offset="72%"  stop-color="#b0a898" stop-opacity="0.65"/>
-                <stop offset="100%" stop-color="#484840" stop-opacity="0.28"/>
-                </linearGradient>
-            </defs>
+  <!-- ──────────────────────────────── ERROR ──────────────────────────────── -->
+  <!-- Inline error banner — fades in over whatever screen is active. -->
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 
-            <!-- ── FLOOR SHADOW ── -->
-            <ellipse cx="60" cy="225" rx="38" ry="5.5" fill="rgba(28,24,20,0.13)"/>
-
-            <!-- ── LIQUID ── -->
-            <g clip-path="url(#bottleClipReveal)">
-                <rect id="reveal-liquid" x="14" y="96" width="92" height="120" fill="url(#liquidGrad)"/>
-                <!-- Liquid meniscus highlight -->
-                <ellipse id="reveal-meniscus" cx="60" cy="97" rx="44" ry="3"
-                        fill="rgba(255,255,255,0.22)"/>
-                <!-- Liquid left shine -->
-                <rect x="14" y="96" width="12" height="120" fill="url(#liquidShine)"/>
-            </g>
-
-            <!-- ── BODY TINT + GLASS SHEEN ── -->
-            <rect x="14" y="62" width="92" height="154" rx="10" ry="10"
-                    fill="url(#glassTintReveal)"/>
-            <rect x="14" y="62" width="92" height="154" rx="10" ry="10"
-                    fill="url(#glassGradReveal)"/>
-            <!-- Body outline with shadow -->
-            <rect x="14" y="62" width="92" height="154" rx="10" ry="10"
-                    stroke="#1c1814" stroke-width="0.65" fill="none" filter="url(#revealShadow)"/>
-
-            <!-- ── LABEL PANEL ── -->
-            <rect x="21" y="118" width="78" height="68" rx="1"
-                    fill="rgba(248,243,236,0.85)" stroke="rgba(140,128,115,0.22)" stroke-width="0.5"/>
-            <!-- Label inner hairline border -->
-            <rect x="25" y="122" width="70" height="60" rx="0.5"
-                    fill="none" stroke="rgba(184,151,106,0.38)" stroke-width="0.4"/>
-
-            <!-- Label content -->
-            <text x="60" y="136" text-anchor="middle"
-                    font-family="'NanumMyeongjo', 'Cormorant Garamond', serif" font-size="5.5"
-                    letter-spacing="0.2" fill="#1c1814" font-weight="300">MAISON Sillage</text>
-            <line x1="30" y1="141" x2="90" y2="141" stroke="#b8976a" stroke-width="0.45"/>
-            <text x="60" y="152" text-anchor="middle"
-                    font-family="'NanumMyeongjo', 'Cormorant Garamond', serif" font-size="4"
-                    letter-spacing="1" fill="#5a5248" font-style="italic"
-                    id="bottle-name-label">EAU DE PARFUM</text>
-            <line x1="35" y1="158" x2="85" y2="158" stroke="rgba(140,128,115,0.2)" stroke-width="0.3"/>
-            <text x="60" y="167" text-anchor="middle"
-                    font-family="'NanumMyeongjo', 'Cormorant Garamond', serif" font-size="3.4"
-                    letter-spacing="2" fill="#9a9088">PARIS · LONDON</text>
-            <text x="60" y="177" text-anchor="middle"
-                    font-family="'NanumMyeongjo', 'Cormorant Garamond', serif" font-size="3.2"
-                    letter-spacing="0.8" fill="rgba(130,120,110,0.6)" font-style="italic">50 ml</text>
-
-            <!-- ── NECK ── -->
-            <rect x="42" y="44" width="36" height="20" rx="3" ry="3"
-                    fill="url(#neckGradReveal)" stroke="#1c1814" stroke-width="0.6"/>
-            <line x1="43" y1="44" x2="43" y2="64" stroke="rgba(0,0,0,0.10)" stroke-width="1.5"/>
-            <line x1="77" y1="44" x2="77" y2="64" stroke="rgba(255,255,255,0.16)" stroke-width="1"/>
-
-            <!-- ── CAP ── -->
-            <rect x="34" y="14" width="52" height="32" rx="4" ry="4"
-                    fill="url(#capGradReveal)"/>
-            <rect x="34" y="14" width="52" height="11" rx="4" ry="4"
-                    fill="url(#capTopReveal)"/>
-            <!-- Cap bevel left -->
-            <rect x="34" y="14" width="3" height="32" rx="1"
-                    fill="rgba(255,255,255,0.04)"/>
-            <!-- Cap rim chrome -->
-            <rect x="33" y="43" width="54" height="2.5" rx="0.5"
-                    fill="url(#rimGradReveal)"/>
-
-            <!-- ── BODY REFLECTIONS ── -->
-            <!-- Primary left highlight -->
-            <rect x="20" y="68" width="7" height="140" rx="3.5"
-                    fill="rgba(255,255,255,0.30)"/>
-            <!-- Soft secondary left -->
-            <rect x="29" y="74" width="2.5" height="118" rx="1.25"
-                    fill="rgba(255,255,255,0.11)"/>
-            <!-- Right edge glint -->
-            <rect x="97" y="76" width="5" height="96" rx="2.5"
-                    fill="rgba(255,255,255,0.13)"/>
-            <!-- Top catch-light -->
-            <ellipse cx="60" cy="70" rx="30" ry="4.5"
-                    fill="rgba(255,255,255,0.20)"/>
-            <!-- Bottom inner glow -->
-            <ellipse cx="60" cy="210" rx="36" ry="4"
-                    fill="rgba(255,255,255,0.06)"/>
-            </svg>
-
-            <div class="reveal-actions">
-            <button class="btn-download" onclick="downloadCard()">↓ <span class="fr"><span class="fr-text">Archiver</span><span class="fr-en">Archive</span></span></button>
-            <button class="btn-again" onclick="goTo('landing')"><span class="fr"><span class="fr-text">Nouvelle composition</span><span class="fr-en">New fragrance</span></span> →</button>
-            <div class="cellar-count" id="cellar-count"></div>
-            </div>
-        </div>
-
-        <div id="fragrance-card" class="reveal-card">
-            <!-- Seal -->
-            <svg class="seal" width="60" height="60" viewBox="0 0 60 60">
-            <circle cx="30" cy="30" r="28" fill="none" stroke="#1c1814" stroke-width="0.8"/>
-            <circle cx="30" cy="30" r="23" fill="none" stroke="#1c1814" stroke-width="0.4"/>
-            <text x="30" y="28" text-anchor="middle" font-family="'Cormorant Garamond'" font-size="6" letter-spacing="2" fill="#1c1814">MAISON</text>
-            <text x="30" y="37" text-anchor="middle" font-family="'Cormorant Garamond'" font-size="8" letter-spacing="1" fill="#1c1814">SILLAGE</text>
-            </svg>
-
-            <div class="card-brand">
-            <div class="card-brand-name">Maison Sillage</div>
-            <div class="card-brand-sub"><span class="fr"><span class="fr-text">Atelier de Parfum Digital</span><span class="fr-en">Digital Fragrance Studio</span></span></div>
-            </div>
-
-            <div class="card-divider"></div>
-
-            <div class="card-fragrance-name" id="card-name">—</div>
-            <div class="card-concentration" id="card-concentration">Eau de Parfum</div>
-            <div class="card-family" id="card-family">Woody Floral Musk</div>
-
-            <div class="card-divider"></div>
-
-            <div class="pyramid-section">
-            <div class="pyramid-row">
-                <div class="pyramid-label"><span class="fr"><span class="fr-text">Notes de Tête</span><span class="fr-en">Top Notes</span></span></div>
-                <div class="pyramid-notes" id="card-top">—</div>
-            </div>
-            <div class="pyramid-row">
-                <div class="pyramid-label"><span class="fr"><span class="fr-text">Notes de Cœur</span><span class="fr-en">Heart Notes</span></span></div>
-                <div class="pyramid-notes" id="card-heart">—</div>
-            </div>
-            <div class="pyramid-row">
-                <div class="pyramid-label"><span class="fr"><span class="fr-text">Notes de Fond</span><span class="fr-en">Base Notes</span></span></div>
-                <div class="pyramid-notes" id="card-base">—</div>
-            </div>
-            </div>
-
-            <div class="card-divider"></div>
-
-            <div class="character-row">
-            <div class="char-item">
-                <div class="char-key"><span class="fr"><span class="fr-text">Humeur</span><span class="fr-en">Mood</span></span></div>
-                <div class="char-val" id="char-mood">—</div>
-            </div>
-            <div class="char-item">
-                <div class="char-key"><span class="fr"><span class="fr-text">Longévité</span><span class="fr-en">Longevity</span></span></div>
-                <div class="char-val" id="char-longevity">—</div>
-            </div>
-            <div class="char-item">
-                <div class="char-key">Projection</div>
-                <div class="char-val" id="char-projection">—</div>
-            </div>
-            <div class="char-item">
-                <div class="char-key"><span class="fr"><span class="fr-text">Intensité</span><span class="fr-en">Intensity</span></span></div>
-                <div class="char-val" id="char-intensity">—</div>
-            </div>
-            </div>
-
-            <div class="card-footer">
-            <div>
-                <div class="batch-code" id="card-batch">—</div>
-                <div class="batch-code" style="margin-top:4px; color:#b8bfb0" id="card-edition">—</div>
-            </div>
-            <div class="edition-info"><span class="fr"><span class="fr-text">Paris · 2026</span><span class="fr-en">Paris · 2026</span></span></div>
-            </div>
-        </div>
-        </div>
-
-        <script src="app.js"></script>
-    </body>
+  <script type="module" src="app.js"></script>
+</body>
 </html>

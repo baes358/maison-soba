@@ -1,20 +1,36 @@
 // scripts/smoke-generate.mjs
 //
 // End-to-end smoke test for the /api/generate handler.
-// Runs three briefs against the real Claude Haiku 4.5 model, prints the
-// results, and asserts schema validity.
+// Tests two flow shapes against the real Claude model:
+//   1. Brief + name + all three tag selections.
+//   2. Constraints-only (no brief) — ensures the no-brief path works.
 //
 // Usage:
 //   ANTHROPIC_API_KEY=sk-ant-... node scripts/smoke-generate.mjs
-//
-// Cost: ~$0.01 per brief at 2026 Haiku 4.5 pricing.
 
 import handler from '../api/generate.js';
 
-const BRIEFS = [
-  'A library in autumn, dust on amber spines, the last hour of reading.',
-  'Petrichor on a Sicilian terrace, salt and figs, late afternoon.',
-  'Midnight in a frankincense church.'
+const TRIALS = [
+  {
+    label: 'Brief + name + tags',
+    body: {
+      brief: 'A library in autumn, dust on amber spines, the last hour of reading.',
+      name: 'soba',
+      head: 'spice',
+      heart: 'iris',
+      base: 'leather'
+    }
+  },
+  {
+    label: 'Constraints only',
+    body: {
+      brief: '',
+      name: 'soba',
+      head: 'marine',
+      heart: 'tea',
+      base: 'musk'
+    }
+  }
 ];
 
 function makeRes() {
@@ -29,20 +45,22 @@ function makeRes() {
 
 function summarize(c) {
   if (c.error) return `  ERROR: ${c.error}`;
-  const topSum   = c.top_notes.reduce((s, n) => s + n.pct, 0);
-  const heartSum = c.heart_notes.reduce((s, n) => s + n.pct, 0);
-  const baseSum  = c.base_notes.reduce((s, n) => s + n.pct, 0);
+  const T = c.top_notes.reduce((s, n) => s + n.pct, 0);
+  const H = c.heart_notes.reduce((s, n) => s + n.pct, 0);
+  const B = c.base_notes.reduce((s, n) => s + n.pct, 0);
   return [
+    `  For client:  ${c._client_name || '(none)'}`,
     `  Name:        ${c.name}`,
     `  Tagline:     ${c.tagline}`,
     `  Family:      ${c.family}`,
-    `  Top   (${topSum}%):   ${c.top_notes.map(n => `${n.material} ${n.pct}%`).join(', ')}`,
-    `  Heart (${heartSum}%):  ${c.heart_notes.map(n => `${n.material} ${n.pct}%`).join(', ')}`,
-    `  Base  (${baseSum}%):  ${c.base_notes.map(n => `${n.material} ${n.pct}%`).join(', ')}`,
-    `  Total:       ${topSum + heartSum + baseSum}%`,
+    `  Top   (${T}%): ${c.top_notes.map(n => `${n.material} ${n.pct}%`).join(', ')}`,
+    `  Heart (${H}%): ${c.heart_notes.map(n => `${n.material} ${n.pct}%`).join(', ')}`,
+    `  Base  (${B}%): ${c.base_notes.map(n => `${n.material} ${n.pct}%`).join(', ')}`,
+    `  Total:       ${T + H + B}%`,
     `  Longevity:   ${c.longevity_hours}h   Projection: ${c.projection}   Intensity: ${c.intensity_pct}%`,
     `  Mood:        ${c.mood_word}   Season: ${c.season}   Time: ${c.time_of_day}`,
-    `  Palette:     ink ${c.design_tokens.palette.ink} | paper ${c.design_tokens.palette.paper} | accent ${c.design_tokens.palette.accent} | shadow ${c.design_tokens.palette.shadow}`,
+    `  Palette:     liquid_top ${c.design_tokens.palette.liquid_top} | liquid_bottom ${c.design_tokens.palette.liquid_bottom} | accent ${c.design_tokens.palette.accent}`,
+    `  Bottle:      ${c.design_tokens.bottle_shape}`,
     `  Motif:       ${c.design_tokens.motif_family} / ${c.design_tokens.motif_subject}`,
     `  Edition:     ${c.edition_number}/999`,
     `  Critique:    ${c.self_critique}`
@@ -55,11 +73,11 @@ if (!process.env.ANTHROPIC_API_KEY) {
 }
 
 let passed = 0;
-for (let i = 0; i < BRIEFS.length; i++) {
-  const brief = BRIEFS[i];
-  console.log(`\n${'='.repeat(72)}\nBrief ${i + 1}/${BRIEFS.length}: "${brief}"\n${'='.repeat(72)}`);
+for (let i = 0; i < TRIALS.length; i++) {
+  const { label, body } = TRIALS[i];
+  console.log(`\n${'='.repeat(72)}\nTrial ${i + 1}/${TRIALS.length}: ${label}\n  body: ${JSON.stringify(body)}\n${'='.repeat(72)}`);
 
-  const req = { method: 'POST', headers: { 'x-forwarded-for': `test-ip-${i}` }, body: { brief } };
+  const req = { method: 'POST', headers: { 'x-forwarded-for': `test-ip-${i}` }, body };
   const res = makeRes();
   const start = Date.now();
   await handler(req, res);
@@ -75,5 +93,5 @@ for (let i = 0; i < BRIEFS.length; i++) {
   passed++;
 }
 
-console.log(`\n${'='.repeat(72)}\n${passed}/${BRIEFS.length} briefs returned valid 200 responses.\n`);
-process.exit(passed === BRIEFS.length ? 0 : 1);
+console.log(`\n${'='.repeat(72)}\n${passed}/${TRIALS.length} trials returned valid 200 responses.\n`);
+process.exit(passed === TRIALS.length ? 0 : 1);

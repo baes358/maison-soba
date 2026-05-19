@@ -1,29 +1,37 @@
 // /api/generate.js
 //
 // POST /api/generate
-//   body: { brief: string }   — the user's perfume brief (≤ 500 chars)
+//   body: {
+//     brief:  string (≤ 500 chars, optional — but at least one of brief or
+//                     tag selection must be present)
+//     name:   string (≤ 60 chars, the client's first name — used only on
+//                     the card, never sent to Claude)
+//     head:   tag id, required (one of TAGS.head)
+//     heart:  tag id, required (one of TAGS.heart)
+//     base:   tag id, required (one of TAGS.base)
+//   }
 //
 // Returns the JSON composition described in /api/lib/prompt.js, validated
 // server-side against the schema and the materials reference. The Anthropic
 // API key never leaves the server.
 //
-// Rate limiting is per-IP, per-instance, 5 / hour. This is intentionally
-// minimal — sufficient for low-traffic public use. Migrate to Vercel KV or
-// Upstash Redis when shared state across instances becomes necessary.
+// Rate limiting is per-IP, per-instance, 5 / hour. Sufficient for low-traffic
+// public use. Migrate to Vercel KV / Upstash Redis when shared state across
+// instances becomes necessary.
 
 import Anthropic from '@anthropic-ai/sdk';
-import { SYSTEM_PROMPT, buildUserMessage } from './lib/prompt.js';
+import { SYSTEM_PROMPT, buildUserMessage, BOTTLE_SHAPES } from './lib/prompt.js';
 import { MATERIALS_BY_NAME } from './lib/materials.js';
+import { constraintsFromSelection } from './lib/tags.js';
 
 const MODEL = 'claude-sonnet-4-6';
 const MAX_BRIEF_CHARS = 500;
+const MAX_NAME_CHARS = 60;
 const RATE_LIMIT_PER_HOUR = 5;
 const RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000;
 const MAX_OUTPUT_TOKENS = 2048;
 
 // ─── per-instance rate limit ──────────────────────────────────────────────
-// Map<ip, { count, windowStart }>. Persists across invocations within one
-// warm function instance only.
 const rateLimits = new Map();
 
 function getClientIp(req) {
@@ -46,7 +54,6 @@ function checkRateLimit(ip) {
   return { ok: true };
 }
 
-// Clean expired entries when the map grows. Cheap to run; no scheduler needed.
 function gcRateLimits() {
   if (rateLimits.size < 500) return;
   const now = Date.now();
@@ -55,17 +62,51 @@ function gcRateLimits() {
   }
 }
 
-// ─── input + schema validation ────────────────────────────────────────────
-function validateBrief(input) {
-  if (typeof input !== 'string') return { ok: false, message: 'Brief must be a string.' };
-  const trimmed = input.trim();
-  if (!trimmed) return { ok: false, message: 'Brief is empty.' };
-  if (trimmed.length > MAX_BRIEF_CHARS) {
-    return { ok: false, message: `Brief is too long (max ${MAX_BRIEF_CHARS} characters).` };
+// ─── request validation ───────────────────────────────────────────────────
+function validateRequest(body) {
+  if (!body || typeof body !== 'object') {
+    return { ok: false, message: 'Body must be a JSON object.' };
   }
-  return { ok: true, brief: trimmed };
+
+  // Brief is optional, but if present must be a clean non-empty string ≤ MAX.
+  let brief = '';
+  if (body.brief !== undefined && body.brief !== null) {
+    if (typeof body.brief !== 'string') return { ok: false, message: 'brief must be a string.' };
+    brief = body.brief.trim();
+    if (brief.length > MAX_BRIEF_CHARS) {
+      return { ok: false, message: `brief is too long (max ${MAX_BRIEF_CHARS} characters).` };
+    }
+  }
+
+  // Name is optional. If present we sanitize and cap; never sent to Claude.
+  let name = '';
+  if (body.name !== undefined && body.name !== null) {
+    if (typeof body.name !== 'string') return { ok: false, message: 'name must be a string.' };
+    name = body.name.trim().slice(0, MAX_NAME_CHARS);
+  }
+
+  // Tag selections are required.
+  let constraints;
+  try {
+    constraints = constraintsFromSelection({
+      head: body.head,
+      heart: body.heart,
+      base: body.base
+    });
+  } catch (err) {
+    return { ok: false, message: err.message };
+  }
+
+  // At least one of brief or constraints must give Claude something to work
+  // with. Constraints alone is acceptable, an empty everything is not.
+  if (!brief && constraints.length === 0) {
+    return { ok: false, message: 'Provide a brief, tag selections, or both.' };
+  }
+
+  return { ok: true, brief, name, constraints };
 }
 
+// ─── response schema validation ───────────────────────────────────────────
 const HEX_RE = /^#[0-9a-f]{6}$/i;
 const isHex = (s) => typeof s === 'string' && HEX_RE.test(s);
 
@@ -73,6 +114,7 @@ const PROJECTIONS = ['intimate', 'moderate', 'strong'];
 const SEASONS = ['spring', 'summer', 'autumn', 'winter', 'transitional'];
 const TIMES = ['morning', 'afternoon', 'evening', 'night'];
 const MOTIF_FAMILIES = ['botanical', 'smoke', 'geometric', 'fruit', 'resin'];
+const BOTTLE_SHAPES_SET = new Set(BOTTLE_SHAPES);
 
 function validateNotes(notes, label, [minSum, maxSum]) {
   if (!Array.isArray(notes) || notes.length === 0) {
@@ -147,8 +189,11 @@ function validateComposition(c) {
   const tokens = c.design_tokens;
   if (!tokens || typeof tokens !== 'object') return 'design_tokens missing.';
   const palette = tokens.palette;
-  if (!palette || !isHex(palette.ink) || !isHex(palette.paper) || !isHex(palette.accent) || !isHex(palette.shadow)) {
-    return 'design_tokens.palette requires four valid hex colors (ink, paper, accent, shadow).';
+  if (!palette || !isHex(palette.liquid_top) || !isHex(palette.liquid_bottom) || !isHex(palette.accent)) {
+    return 'design_tokens.palette requires three valid hex colors (liquid_top, liquid_bottom, accent).';
+  }
+  if (!BOTTLE_SHAPES_SET.has(tokens.bottle_shape)) {
+    return `design_tokens.bottle_shape must be one of ${BOTTLE_SHAPES.join('|')}.`;
   }
   if (!MOTIF_FAMILIES.includes(tokens.motif_family)) {
     return `design_tokens.motif_family must be one of ${MOTIF_FAMILIES.join('|')}.`;
@@ -177,7 +222,6 @@ function extractJson(text) {
   try {
     return JSON.parse(cleaned);
   } catch {
-    // Heuristic recovery: pull the first {...} block out.
     const first = cleaned.indexOf('{');
     const last = cleaned.lastIndexOf('}');
     if (first === -1 || last === -1 || last < first) return null;
@@ -196,8 +240,6 @@ async function callClaude(client, messages) {
     system: [{
       type: 'text',
       text: SYSTEM_PROMPT,
-      // Cache the 4k-token system prompt across requests. 5-min TTL is fine
-      // for our traffic shape — every cache hit saves cost and latency.
       cache_control: { type: 'ephemeral' }
     }],
     messages
@@ -213,11 +255,9 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'method_not_allowed', message: 'Use POST.' });
   }
 
-  // Validate the request shape before checking server-side config so that
-  // bad client input always gets a 400 and never gets confused with a 500.
-  const validation = validateBrief(req.body?.brief);
-  if (!validation.ok) {
-    return res.status(400).json({ error: 'invalid_brief', message: validation.message });
+  const v = validateRequest(req.body);
+  if (!v.ok) {
+    return res.status(400).json({ error: 'invalid_request', message: v.message });
   }
 
   if (!process.env.ANTHROPIC_API_KEY) {
@@ -241,16 +281,12 @@ export default async function handler(req, res) {
   gcRateLimits();
 
   const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
-  const initialUserMsg = buildUserMessage(validation.brief);
+  const initialUserMsg = buildUserMessage({ brief: v.brief, constraints: v.constraints });
 
   let composition = null;
   let lastError = null;
   let messages = [{ role: 'user', content: initialUserMsg }];
-  let lastAssistantText = null;
 
-  // Two attempts. On retry we feed the previous (broken) assistant turn
-  // back in along with a corrective user message that names the exact
-  // schema violation — much more reliable than re-asking blind.
   for (let attempt = 1; attempt <= 2; attempt++) {
     let text;
     try {
@@ -266,7 +302,6 @@ export default async function handler(req, res) {
       }
       continue;
     }
-    lastAssistantText = text;
 
     const parsed = extractJson(text);
     if (!parsed) {
@@ -304,5 +339,7 @@ export default async function handler(req, res) {
     });
   }
 
-  return res.status(200).json(composition);
+  // Echo the client's name back so the frontend can show it on the card
+  // without needing to track local state across the async call.
+  return res.status(200).json({ ...composition, _client_name: v.name });
 }

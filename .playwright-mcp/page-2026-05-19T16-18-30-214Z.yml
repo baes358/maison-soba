@@ -1,0 +1,18 @@
+- generic [ref=e10]:
+  - generic "Maison Sillage" [ref=e11]:
+    - generic [ref=e12]: MS
+  - heading "the method." [level=2] [ref=e13]
+  - paragraph [ref=e14]:
+    - text: Each composition is a suggestion,
+    - text: formulated by an intelligence trained in perfumery.
+  - list [ref=e15]:
+    - listitem [ref=e16]:
+      - generic [ref=e17]: I. La confidence
+      - emphasis [ref=e19]: You describe a place, an hour, a memory.
+    - listitem [ref=e20]:
+      - generic [ref=e21]: II. La composition
+      - emphasis [ref=e23]: We compose the matière — head, heart, base — by the laws of perfumery.
+    - listitem [ref=e24]:
+      - generic [ref=e25]: III. La carte
+      - emphasis [ref=e27]: A formula, a sillage. A unique edition for yours truly.
+  - button "continue" [ref=e28] [cursor=pointer]
