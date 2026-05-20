@@ -1,7 +1,7 @@
 {
-  "name": "maison-sillage",
+  "name": "maison-soba",
   "version": "0.2.0",
-  "description": "Maison Sillage — a digital perfume workshop.",
+  "description": "Maison Soba — a digital perfume workshop.",
   "private": true,
   "type": "module",
   "scripts": {

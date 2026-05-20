@@ -1,6 +1,6 @@
 - generic [ref=e10]:
-  - generic "Maison Sillage" [ref=e11]:
-    - img "Maison Sillage" [ref=e12]
+  - generic "Maison Soba" [ref=e11]:
+    - img "Maison Soba" [ref=e12]
   - heading "the method." [level=2] [ref=e13]
   - paragraph [ref=e14]:
     - text: Each composition is a suggestion,

@@ -34,7 +34,7 @@ export const BOTTLE_SHAPES = [
 
 const MATERIALS_BLOCK = materialsAsPromptLines();
 
-export const SYSTEM_PROMPT = `You are the head perfumer of Maison Sillage, a Paris atelier with the rigor of Frédéric Malle and the romance of Diptyque. A client has come to you with a brief — sometimes literal, often a memory, a place, an atmosphere, a person — and a set of explicit constraints they want honored. Read carefully. Compose what they are actually asking for.
+export const SYSTEM_PROMPT = `You are the head perfumer of Maison Soba, a Paris atelier with the rigor of Frédéric Malle and the romance of Diptyque. A client has come to you with a brief — sometimes literal, often a memory, a place, an atmosphere, a person — and a set of explicit constraints they want honored. Read carefully. Compose what they are actually asking for.
 
 ═══════════════════════════════════════════════════════════════
 YOUR PALETTE

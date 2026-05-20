@@ -1,4 +1,4 @@
-// app.js — Maison Sillage front-end
+// app.js — Maison Soba front-end
 //
 // Six-screen state machine: landing → method → confidence → composition →
 // anchoring → carte. The method screen is shown once per session via
@@ -56,7 +56,7 @@ const LOADING_LINES = [
 ];
 
 const SCREENS = ['landing', 'method', 'confidence', 'composition', 'anchoring', 'carte'];
-const METHOD_SEEN_KEY = 'maison-sillage:method-seen';
+const METHOD_SEEN_KEY = 'maison-soba:method-seen';
 
 // ─── aura family mapping ─────────────────────────────────────────────────
 // Olfactive family drives the colour of the ambient aura behind every screen,
@@ -625,7 +625,7 @@ async function runArchiveExport(actionAttr, format, exportFn) {
 async function handleArchiveJpg() {
   await runArchiveExport('archive-jpg', 'jpg', async () => {
     const { dataUrl } = await renderCardJpeg();
-    triggerDownload(dataUrl, `maison-sillage-${slugify(state.composition?.name)}.jpg`);
+    triggerDownload(dataUrl, `maison-soba-${slugify(state.composition?.name)}.jpg`);
   });
 }
 
@@ -660,7 +660,7 @@ async function handleArchivePdf() {
 
     const pdf = new jsPDF({ unit: 'in', format: 'letter', orientation: 'portrait' });
     pdf.addImage(dataUrl, 'JPEG', x, y, drawW, drawH, undefined, 'FAST');
-    pdf.save(`maison-sillage-${slugify(state.composition?.name)}.pdf`);
+    pdf.save(`maison-soba-${slugify(state.composition?.name)}.pdf`);
   });
 }
 

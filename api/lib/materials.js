@@ -1,6 +1,6 @@
 // /api/lib/materials.js
 //
-// The Maison Sillage perfumer's organ — a curated reference of ~150 materials
+// The Maison Soba perfumer's organ — a curated reference of ~150 materials
 // the AI perfumer can compose from. Each entry is structured so it can be
 // embedded in the system prompt and machine-validated later.
 //
