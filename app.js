@@ -188,20 +188,48 @@ const state = {
   heart: null,
   base: null,
   composition: null,
-  archive: [] // session-only, populated when user clicks Archive
+  archive: [], // session-only, populated when user clicks Archive
+  // Navigation stack — pushed by goTo, popped by goBack. 'anchoring' is
+  // transient (loading) and the terminal 'carte' is reached by macerate,
+  // so neither should be a back target.
+  history: []
 };
+
+const NO_BACK_TARGETS = new Set(['anchoring']);
 
 // ─── DOM utils ──────────────────────────────────────────────────────────
 const $ = (sel, root = document) => root.querySelector(sel);
 const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
 
-function goTo(screenId) {
+function goTo(screenId, opts = {}) {
   if (!SCREENS.includes(screenId)) return;
+  if (state.screen && state.screen !== screenId && !opts.replace) {
+    if (!NO_BACK_TARGETS.has(state.screen)) {
+      state.history.push(state.screen);
+    }
+  }
   state.screen = screenId;
   $$('.screen').forEach(el => el.classList.remove('active'));
   const target = $(`[data-screen="${screenId}"]`);
   if (target) target.classList.add('active');
   window.scrollTo({ top: 0, behavior: 'instant' });
+  updateBackButtons();
+}
+
+function goBack() {
+  const prev = state.history.pop();
+  if (!prev) return;
+  state.screen = prev;
+  $$('.screen').forEach(el => el.classList.remove('active'));
+  const target = $(`[data-screen="${prev}"]`);
+  if (target) target.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'instant' });
+  updateBackButtons();
+}
+
+function updateBackButtons() {
+  const empty = state.history.length === 0;
+  $$('.screen-back').forEach(btn => btn.classList.toggle('is-hidden', empty));
 }
 
 // ─── toast (errors and friendly notices) ────────────────────────────────
@@ -643,6 +671,7 @@ function handleReset() {
   state.heart = null;
   state.base = null;
   state.composition = null;
+  state.history = [];
   $('#input-brief').value = '';
   // Don't clear the name — the same client is composing again.
   $$('.tag').forEach(t => {
@@ -651,7 +680,7 @@ function handleReset() {
   });
   $('#btn-macerate').disabled = true;
   applyAuras();
-  goTo('confidence');
+  goTo('confidence', { replace: true });
 }
 
 // ─── vellum halo sizing ─────────────────────────────────────────────────
@@ -724,6 +753,7 @@ function boot() {
   // Wire actions
   $$('[data-action="begin"]').forEach(b => b.addEventListener('click', handleBegin));
   $$('[data-action="continue"]').forEach(b => b.addEventListener('click', handleContinue));
+  $$('[data-action="back"]').forEach(b => b.addEventListener('click', goBack));
   $$('[data-action="archive-jpg"]').forEach(b => b.addEventListener('click', handleArchiveJpg));
   $$('[data-action="archive-pdf"]').forEach(b => b.addEventListener('click', handleArchivePdf));
   $$('[data-action="reset"]').forEach(b => b.addEventListener('click', e => { e.preventDefault(); handleReset(); }));
