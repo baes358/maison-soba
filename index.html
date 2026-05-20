@@ -143,10 +143,12 @@
 
   <!-- ──────────────────────────── ANCHORING (loading) ────────────────────── -->
   <section class="screen screen--anchoring" data-screen="anchoring">
-    <!-- Dreamy aura layer — family-tinted radial that drifts on its own
-         slow loop, behind the entire stack. Lives outside the stack so its
-         positioning isn't bound to flex flow. -->
-    <div class="anchoring-orb aura-gourmand" id="anchoring-orb" aria-hidden="true"></div>
+    <!-- Dreamy aura layer — a viewport-spanning multi-spot wash whose
+         colour points are driven by --orb-core-a/b (set in JS from the
+         current family). Each spot drifts on its own slow loop so colour
+         floats across the background rather than concentrating in the
+         center. -->
+    <div class="anchoring-orb" id="anchoring-orb" aria-hidden="true"></div>
 
     <div class="stack stack--center">
       <div class="ms-monogram" aria-label="Maison Sillage">
@@ -195,33 +197,48 @@
 
         <div class="carte-bottle-col">
           <!-- Final bottle. The body shape (clipPath + strokes) is set by
-               app.js based on composition.design_tokens.bottle_shape. The
+               app.js based on composition.design_tokens.bottle_shape; the
                liquid gradient stops are set from the user's family choices.
-               .bottle-stage gives the bottle a 3D perspective + slow
-               ambient float; .bottle-line--reveal handles pointer tilt
-               and hover lift. -->
-          <div class="bottle-stage" id="bottle-stage">
-            <svg
-              class="bottle-line bottle-line--reveal"
-              viewBox="0 0 120 200"
-              xmlns="http://www.w3.org/2000/svg"
-              aria-hidden="true"
-              id="reveal-bottle">
-              <defs>
-                <linearGradient id="liquid-grad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%"   id="liquid-grad-top" stop-color="#d8a26b"/>
-                  <stop offset="100%" id="liquid-grad-bot" stop-color="#7a2a3a"/>
-                </linearGradient>
-                <clipPath id="liquid-clip" data-bottle-clip></clipPath>
-              </defs>
-              <g clip-path="url(#liquid-clip)">
-                <rect id="reveal-liquid" x="0" y="100" width="120" height="72" fill="url(#liquid-grad)"/>
+               The bottle itself doesn't move — hovering triggers a single
+               diagonal shine sweep clipped to the bottle silhouette. -->
+          <svg
+            class="bottle-line bottle-line--reveal"
+            viewBox="0 0 120 200"
+            xmlns="http://www.w3.org/2000/svg"
+            aria-hidden="true"
+            id="reveal-bottle">
+            <defs>
+              <linearGradient id="liquid-grad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%"   id="liquid-grad-top" stop-color="#d8a26b"/>
+                <stop offset="100%" id="liquid-grad-bot" stop-color="#7a2a3a"/>
+              </linearGradient>
+              <!-- A soft white band used for the hover shine sweep. The
+                   gradient is horizontal in objectBoundingBox so when the
+                   rect is rotated by the wrapping <g>, the band rotates
+                   with it — and CSS translateX on the rect sweeps the
+                   band along its own (rotated) horizontal. -->
+              <linearGradient id="bottle-shine-grad" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%"   stop-color="#ffffff" stop-opacity="0"/>
+                <stop offset="50%"  stop-color="#ffffff" stop-opacity="0.95"/>
+                <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+              </linearGradient>
+              <clipPath id="liquid-clip" data-bottle-clip></clipPath>
+            </defs>
+            <g clip-path="url(#liquid-clip)">
+              <rect id="reveal-liquid" x="0" y="100" width="120" height="72" fill="url(#liquid-grad)"/>
+            </g>
+            <g data-bottle-strokes
+               fill="none" stroke="currentColor" stroke-width="1.2"
+               stroke-linecap="round" stroke-linejoin="round"></g>
+            <!-- Hover shine: diagonal band clipped to the bottle. -->
+            <g class="bottle-shine" clip-path="url(#liquid-clip)" aria-hidden="true">
+              <g transform="rotate(-22 60 100)">
+                <rect class="bottle-shine__beam"
+                      x="42" y="-40" width="36" height="280"
+                      fill="url(#bottle-shine-grad)"/>
               </g>
-              <g data-bottle-strokes
-                 fill="none" stroke="currentColor" stroke-width="1.2"
-                 stroke-linecap="round" stroke-linejoin="round"></g>
-            </svg>
-          </div>
+            </g>
+          </svg>
 
           <div class="archive-actions">
             <button class="btn btn--small" data-action="archive-jpg">

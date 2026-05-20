@@ -123,13 +123,23 @@ function currentFamily() {
 }
 
 function applyAuraFamily(family) {
+  // The ambient aura and vellum halo each render a single tinted radial
+  // — toggling the .aura-* class is the right way to retint them.
   const ambient = document.getElementById('ambient-aura');
-  const orb     = document.getElementById('anchoring-orb');
   const halo    = document.getElementById('vellum-aura');
-  for (const el of [ambient, orb, halo]) {
+  for (const el of [ambient, halo]) {
     if (!el) continue;
     for (const f of AURA_FAMILIES) el.classList.remove('aura-' + f);
     el.classList.add('aura-' + family);
+  }
+  // The anchoring orb paints multiple drifting spots, so it consumes the
+  // family colours through CSS variables rather than a single-radial
+  // class. Setting --orb-core-a/b lets the .anchoring-orb rule compose a
+  // diffuse, viewport-spanning wash instead of one bright centered orb.
+  const orb = document.getElementById('anchoring-orb');
+  if (orb) {
+    orb.style.setProperty('--orb-core-a', `var(--aura-${family}-a)`);
+    orb.style.setProperty('--orb-core-b', `var(--aura-${family}-b)`);
   }
 }
 
@@ -656,41 +666,6 @@ function wireCardHover() {
   });
 }
 
-// ─── bottle pointer tilt ────────────────────────────────────────────────
-// Mirror of the card tilt: while the pointer is over the reveal bottle,
-// rotate it toward the cursor (up to ±10°) so it feels like the glass is
-// catching light. Combined with the ambient float on the wrapper stage,
-// this gives the bottle a live, interactive presence.
-function wireBottleHover() {
-  const bottle = $('#reveal-bottle');
-  if (!bottle) return;
-  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-
-  const MAX = 10;
-  let raf = 0;
-  const onMove = (e) => {
-    if (raf) cancelAnimationFrame(raf);
-    raf = requestAnimationFrame(() => {
-      const r = bottle.getBoundingClientRect();
-      const px = (e.clientX - r.left) / r.width;
-      const py = (e.clientY - r.top)  / r.height;
-      const ry = (px - 0.5) *  MAX * 2;
-      const rx = (0.5 - py) *  MAX * 2;
-      bottle.style.setProperty('--b-ry', `${ry.toFixed(2)}deg`);
-      bottle.style.setProperty('--b-rx', `${rx.toFixed(2)}deg`);
-    });
-  };
-
-  bottle.addEventListener('pointerenter', () => bottle.classList.add('is-tracking'));
-  bottle.addEventListener('pointermove', onMove);
-  bottle.addEventListener('pointerleave', () => {
-    if (raf) cancelAnimationFrame(raf);
-    bottle.classList.remove('is-tracking');
-    bottle.style.setProperty('--b-rx', '0deg');
-    bottle.style.setProperty('--b-ry', '0deg');
-  });
-}
-
 // ─── boot ───────────────────────────────────────────────────────────────
 function boot() {
   renderTags();
@@ -711,7 +686,6 @@ function boot() {
   $('#form-composition').addEventListener('submit', handleMacerate);
 
   wireCardHover();
-  wireBottleHover();
 
   // Keep the vellum halo glued to the card across viewport changes.
   window.addEventListener('resize', positionVellumHalo);

@@ -423,12 +423,13 @@ body {
 }
 
 /* The fieldset is a transparent two-row stack: legend sits outside the
-   chip container; the .tag-row beneath it is the visible frosted sheet. */
+   chip container; the .tag-row beneath it is the visible frosted sheet.
+   `<legend>` is special-cased by browsers and doesn't always participate
+   in the parent's flex flow, so the spacing below the legend is enforced
+   with an explicit margin-bottom rather than a flex `gap`. */
 .tag-group {
   position: relative;
-  display: flex;
-  flex-direction: column;
-  gap: 28px;
+  display: block;
   background: transparent;
   border: none;
   border-radius: 0;
@@ -444,11 +445,13 @@ body {
 .tag-group__legend {
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  margin: 0;
+  gap: 6px;
+  margin: 0 0 64px;
+  padding: 0;
   text-align: center;
   align-items: center;
   width: 100%;
+  float: none;
 }
 
 .tag-group__title {
@@ -598,68 +601,34 @@ body {
 }
 
 .bottle-line--reveal {
-  --b-rx: 0deg;
-  --b-ry: 0deg;
   width: 160px;
   opacity: 1;
-  cursor: pointer;
-  transform: rotateX(var(--b-rx)) rotateY(var(--b-ry));
-  transform-origin: 50% 60%;
-  transition: transform 220ms var(--ease), filter 360ms var(--ease);
   filter: drop-shadow(0 4px 10px oklch(0.30 0.06 30 / 0.10));
-  will-change: transform;
 }
 
-/* While the cursor is over the bottle, kill the transition so the tilt
-   tracks the pointer instead of trailing behind it. */
-.bottle-line--reveal.is-tracking {
-  transition: filter 360ms var(--ease);
+/* Hover shine — a diagonal white band sweeps once across the bottle.
+   The bottle itself stays put; only the band moves. The animation is
+   keyed to :hover so re-entering re-triggers a fresh sweep. */
+.bottle-shine__beam {
+  opacity: 0;
+  transform: translateX(-110px);
 }
 
-.bottle-line--reveal:hover {
-  filter: drop-shadow(0 14px 28px oklch(0.30 0.06 30 / 0.28));
+.bottle-line--reveal:hover .bottle-shine__beam {
+  animation: bottle-shine-sweep 1.1s var(--ease);
 }
 
-/* Stage wraps the bottle: gives it perspective for the inner rotation
-   and a slow ambient float so the bottle "breathes" even when idle. */
-.bottle-stage {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  perspective: 900px;
-  animation: bottle-float 6.5s ease-in-out infinite alternate;
-  transform-origin: 50% 100%;
-}
-
-.bottle-stage:hover {
-  animation-duration: 4s;
-}
-
-@keyframes bottle-float {
-  0%   { transform: translateY(0)    rotate(-0.4deg); }
-  50%  { transform: translateY(-5px) rotate(0deg); }
-  100% { transform: translateY(-9px) rotate(0.5deg); }
-}
-
-/* Liquid sloshes gently while the bottle is hovered. */
-.bottle-line--reveal:hover #reveal-liquid {
-  animation: liquid-slosh 1.8s ease-in-out infinite alternate;
-  transform-origin: 50% 100%;
-  transform-box: fill-box;
-}
-
-@keyframes liquid-slosh {
-  0%   { transform: translateY(0)    skewY(0deg); }
-  50%  { transform: translateY(-2px) skewY(-0.6deg); }
-  100% { transform: translateY(-5px) skewY(0.6deg); }
+@keyframes bottle-shine-sweep {
+  0%   { opacity: 0; transform: translateX(-110px); }
+  18%  { opacity: 1; }
+  82%  { opacity: 1; }
+  100% { opacity: 0; transform: translateX(110px); }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .bottle-stage,
-  .bottle-line--reveal:hover #reveal-liquid {
+  .bottle-line--reveal:hover .bottle-shine__beam {
     animation: none;
   }
-  .bottle-line--reveal { transform: none !important; }
 }
 
 .anchoring-liquid {
@@ -683,54 +652,80 @@ body {
   min-height: 1.6em;
 }
 
-/* Dreamy family-tinted aura behind the anchoring stack. Big, soft, and
-   drifting on a long irregular loop so the room feels alive while the
-   AI is composing. An inner warm wash drifts on its own timing so the
-   two motions create parallax instead of a single uniform pulse. */
+/* Dreamy family-tinted aura behind the anchoring stack.
+
+   The composition is a viewport-spanning sheet with four soft radial
+   "spots" placed at the corners-ish. Each spot is large but heavily
+   feathered (transparent by ~70%) and the whole sheet is blurred — so
+   colour spreads across the background rather than concentrating in a
+   single bright center.
+
+   --orb-core-a / --orb-core-b are set by JS from the current family
+   (e.g. var(--aura-floral-a), var(--aura-floral-b)). The fallback chain
+   resolves to the gourmand pair if vars aren't set yet. */
 .anchoring-orb {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 720px;
-  height: 720px;
-  margin: -360px 0 0 -360px;
+  inset: -8%;
+  width: auto;
+  height: auto;
+  margin: 0;
   pointer-events: none;
-  border-radius: 50%;
-  filter: blur(80px) saturate(1.2);
-  opacity: 0.65;
+  border-radius: 0;
+  filter: blur(110px) saturate(1.05);
+  opacity: 0.55;
   z-index: 0;
-  animation: anchoring-orb-drift 18s ease-in-out infinite;
+  background:
+    radial-gradient(38% 32% at 20% 26%, var(--orb-core-a, var(--aura-gourmand-a)) 0%, transparent 72%),
+    radial-gradient(34% 30% at 78% 30%, var(--orb-core-b, var(--aura-gourmand-b)) 0%, transparent 75%),
+    radial-gradient(42% 36% at 32% 78%, var(--orb-core-b, var(--aura-gourmand-b)) 0%, transparent 72%),
+    radial-gradient(36% 32% at 80% 76%, var(--orb-core-a, var(--aura-gourmand-a)) 0%, transparent 75%);
+  animation: anchoring-orb-drift 28s ease-in-out infinite;
   will-change: transform, opacity;
 }
 
+/* A second, smaller wash drifts on its own timing so the two motions
+   never align — adds a floaty, layered quality. */
 .anchoring-orb::after {
   content: '';
   position: absolute;
-  inset: 18%;
-  border-radius: 50%;
-  background: radial-gradient(
-    circle at 50% 50%,
-    oklch(0.95 0.04 70 / 0.55),
-    oklch(0.90 0.05 55 / 0.20) 45%,
-    transparent 70%
-  );
-  filter: blur(30px);
-  mix-blend-mode: screen;
-  animation: anchoring-orb-inner 14s ease-in-out infinite alternate;
+  inset: 8%;
+  background:
+    radial-gradient(28% 24% at 60% 18%, var(--orb-core-a, var(--aura-gourmand-a)) 0%, transparent 75%),
+    radial-gradient(26% 22% at 18% 60%, var(--orb-core-b, var(--aura-gourmand-b)) 0%, transparent 78%),
+    radial-gradient(30% 26% at 70% 82%, var(--orb-core-b, var(--aura-gourmand-b)) 0%, transparent 75%);
+  filter: blur(40px);
+  opacity: 0.7;
+  animation: anchoring-orb-inner 22s ease-in-out infinite alternate;
 }
 
 @keyframes anchoring-orb-drift {
-  0%   { transform: translate(-6%, -2%) scale(1.00); opacity: 0.55; }
-  20%  { transform: translate( 8%, -7%) scale(1.10); opacity: 0.74; }
-  40%  { transform: translate(12%,  5%) scale(0.94); opacity: 0.58; }
-  60%  { transform: translate( 2%, 10%) scale(1.07); opacity: 0.72; }
-  80%  { transform: translate(-10%, 4%) scale(0.98); opacity: 0.62; }
-  100% { transform: translate(-6%, -2%) scale(1.00); opacity: 0.55; }
+  0%   { transform: translate(-2%,  -1%) scale(1.00); opacity: 0.45; }
+  25%  { transform: translate( 3%,  -3%) scale(1.05); opacity: 0.60; }
+  50%  { transform: translate( 4%,   2%) scale(0.98); opacity: 0.55; }
+  75%  { transform: translate(-3%,   3%) scale(1.04); opacity: 0.62; }
+  100% { transform: translate(-2%,  -1%) scale(1.00); opacity: 0.45; }
 }
 
 @keyframes anchoring-orb-inner {
-  0%   { transform: translate(-10%, 6%) scale(1.00); opacity: 0.55; }
-  100% { transform: translate( 8%, -8%) scale(0.88); opacity: 0.90; }
+  0%   { transform: translate(-4%,  2%) scale(1.00); opacity: 0.50; }
+  100% { transform: translate( 5%, -4%) scale(0.94); opacity: 0.85; }
+}
+
+/* Override the multi-spot background with the family's single-radial
+   styling — only the family classes that target this element directly
+   would otherwise outweigh the .anchoring-orb rule. We intentionally
+   strip them: family colour comes from the CSS vars set in JS. */
+.anchoring-orb.aura-floral,
+.anchoring-orb.aura-oriental,
+.anchoring-orb.aura-marine,
+.anchoring-orb.aura-woody,
+.anchoring-orb.aura-citrus,
+.anchoring-orb.aura-gourmand {
+  background:
+    radial-gradient(38% 32% at 20% 26%, var(--orb-core-a, var(--aura-gourmand-a)) 0%, transparent 72%),
+    radial-gradient(34% 30% at 78% 30%, var(--orb-core-b, var(--aura-gourmand-b)) 0%, transparent 75%),
+    radial-gradient(42% 36% at 32% 78%, var(--orb-core-b, var(--aura-gourmand-b)) 0%, transparent 72%),
+    radial-gradient(36% 32% at 80% 76%, var(--orb-core-a, var(--aura-gourmand-a)) 0%, transparent 75%);
 }
 
 /* Keep the bottle/text/monogram above the orb. */
