@@ -676,6 +676,22 @@ body {
   }
 }
 
+/* La carte reveal: the bottle's liquid rises from empty to its resting
+   half-full level when the screen activates. Once full, the rect rests
+   in place — the SMIL animateTransform inside #liquid-grad keeps the
+   colour bands swirling continuously. The HTML rect's default y/height
+   are the resting state, so reduced-motion users see a filled bottle
+   without any rise animation. */
+.screen--carte.active #reveal-liquid {
+  animation: reveal-liquid-fill 1.6s var(--ease) backwards;
+  animation-delay: 360ms;
+}
+
+@keyframes reveal-liquid-fill {
+  from { y: 172px; height: 0px; }
+  to   { y: 100px; height: 72px; }
+}
+
 .anchoring-liquid {
   animation: liquid-fill 2.4s ease-in-out infinite;
 }
@@ -1281,7 +1297,19 @@ body {
   .tag-group__title { font-size: 10px; letter-spacing: 0.26em; }
   .tag-group__sub { font-size: 11px; }
   .tag-row { padding: 10px 10px; gap: 6px; }
-  .tag { height: 28px; padding: 0 10px; font-size: 10px; letter-spacing: 0.18em; gap: 7px; }
+  /* Force exactly three chips per row so head/heart (6 chips) stack as a
+     balanced 3+3, and base (5 chips) becomes 3+2 with the orphan pair
+     centred by the row's existing justify-content: center. */
+  .tag {
+    height: 28px;
+    padding: 0 8px;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    gap: 6px;
+    flex: 0 0 calc((100% - 12px) / 3);
+    min-width: 0;
+    justify-content: center;
+  }
   .tag::before { width: 4px; height: 4px; }
   #btn-macerate { height: 40px; font-size: 11px; padding: 0 22px; }
 }

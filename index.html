@@ -218,6 +218,17 @@
                 <stop offset="0%"   id="liquid-grad-top" stop-color="#d8a26b"/>
                 <stop offset="50%"  id="liquid-grad-mid" stop-color="#c46a4f"/>
                 <stop offset="100%" id="liquid-grad-bot" stop-color="#7a2a3a"/>
+                <!-- Continuous swirl: the gradient axis rocks side-to-side
+                     around the rect's centre, so the three colour bands
+                     appear to tilt and settle inside the bottle the way
+                     liquid sloshes in a glass. Runs forever; only visible
+                     once the rect has filled up on la carte. -->
+                <animateTransform attributeName="gradientTransform" type="rotate"
+                  values="-22 0.5 0.5; 22 0.5 0.5; -22 0.5 0.5"
+                  keyTimes="0; 0.5; 1"
+                  dur="9s" repeatCount="indefinite"
+                  calcMode="spline"
+                  keySplines="0.42 0 0.58 1; 0.42 0 0.58 1"/>
               </linearGradient>
               <!-- A soft white band used for the hover shine sweep. The
                    gradient is horizontal in objectBoundingBox so when the
