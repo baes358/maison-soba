@@ -143,13 +143,15 @@
 
   <!-- ──────────────────────────── ANCHORING (loading) ────────────────────── -->
   <section class="screen screen--anchoring" data-screen="anchoring">
+    <!-- Dreamy aura layer — family-tinted radial that drifts on its own
+         slow loop, behind the entire stack. Lives outside the stack so its
+         positioning isn't bound to flex flow. -->
+    <div class="anchoring-orb aura-gourmand" id="anchoring-orb" aria-hidden="true"></div>
+
     <div class="stack stack--center">
       <div class="ms-monogram" aria-label="Maison Sillage">
         <img src="media/ms-monogram.svg" alt="Maison Sillage" class="ms-monogram__mark">
       </div>
-
-      <!-- Soft aura ring behind the bottle — picks up the current family. -->
-      <div class="anchoring-orb aura-gourmand" id="anchoring-orb" aria-hidden="true"></div>
 
       <!-- Bottle silhouette during loading. The shape cycles through all
            six silhouettes (driven by app.js) while a ghost-ink liquid rises
@@ -194,27 +196,32 @@
         <div class="carte-bottle-col">
           <!-- Final bottle. The body shape (clipPath + strokes) is set by
                app.js based on composition.design_tokens.bottle_shape. The
-               liquid gradient stops are set from the AI palette. -->
-          <svg
-            class="bottle-line bottle-line--reveal"
-            viewBox="0 0 120 200"
-            xmlns="http://www.w3.org/2000/svg"
-            aria-hidden="true"
-            id="reveal-bottle">
-            <defs>
-              <linearGradient id="liquid-grad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%"   id="liquid-grad-top" stop-color="#d8a26b"/>
-                <stop offset="100%" id="liquid-grad-bot" stop-color="#7a2a3a"/>
-              </linearGradient>
-              <clipPath id="liquid-clip" data-bottle-clip></clipPath>
-            </defs>
-            <g clip-path="url(#liquid-clip)">
-              <rect id="reveal-liquid" x="0" y="100" width="120" height="72" fill="url(#liquid-grad)"/>
-            </g>
-            <g data-bottle-strokes
-               fill="none" stroke="currentColor" stroke-width="1.2"
-               stroke-linecap="round" stroke-linejoin="round"></g>
-          </svg>
+               liquid gradient stops are set from the user's family choices.
+               .bottle-stage gives the bottle a 3D perspective + slow
+               ambient float; .bottle-line--reveal handles pointer tilt
+               and hover lift. -->
+          <div class="bottle-stage" id="bottle-stage">
+            <svg
+              class="bottle-line bottle-line--reveal"
+              viewBox="0 0 120 200"
+              xmlns="http://www.w3.org/2000/svg"
+              aria-hidden="true"
+              id="reveal-bottle">
+              <defs>
+                <linearGradient id="liquid-grad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%"   id="liquid-grad-top" stop-color="#d8a26b"/>
+                  <stop offset="100%" id="liquid-grad-bot" stop-color="#7a2a3a"/>
+                </linearGradient>
+                <clipPath id="liquid-clip" data-bottle-clip></clipPath>
+              </defs>
+              <g clip-path="url(#liquid-clip)">
+                <rect id="reveal-liquid" x="0" y="100" width="120" height="72" fill="url(#liquid-grad)"/>
+              </g>
+              <g data-bottle-strokes
+                 fill="none" stroke="currentColor" stroke-width="1.2"
+                 stroke-linecap="round" stroke-linejoin="round"></g>
+            </svg>
+          </div>
 
           <div class="archive-actions">
             <button class="btn btn--small" data-action="archive-jpg">

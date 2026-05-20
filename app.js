@@ -656,6 +656,41 @@ function wireCardHover() {
   });
 }
 
+// ─── bottle pointer tilt ────────────────────────────────────────────────
+// Mirror of the card tilt: while the pointer is over the reveal bottle,
+// rotate it toward the cursor (up to ±10°) so it feels like the glass is
+// catching light. Combined with the ambient float on the wrapper stage,
+// this gives the bottle a live, interactive presence.
+function wireBottleHover() {
+  const bottle = $('#reveal-bottle');
+  if (!bottle) return;
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  const MAX = 10;
+  let raf = 0;
+  const onMove = (e) => {
+    if (raf) cancelAnimationFrame(raf);
+    raf = requestAnimationFrame(() => {
+      const r = bottle.getBoundingClientRect();
+      const px = (e.clientX - r.left) / r.width;
+      const py = (e.clientY - r.top)  / r.height;
+      const ry = (px - 0.5) *  MAX * 2;
+      const rx = (0.5 - py) *  MAX * 2;
+      bottle.style.setProperty('--b-ry', `${ry.toFixed(2)}deg`);
+      bottle.style.setProperty('--b-rx', `${rx.toFixed(2)}deg`);
+    });
+  };
+
+  bottle.addEventListener('pointerenter', () => bottle.classList.add('is-tracking'));
+  bottle.addEventListener('pointermove', onMove);
+  bottle.addEventListener('pointerleave', () => {
+    if (raf) cancelAnimationFrame(raf);
+    bottle.classList.remove('is-tracking');
+    bottle.style.setProperty('--b-rx', '0deg');
+    bottle.style.setProperty('--b-ry', '0deg');
+  });
+}
+
 // ─── boot ───────────────────────────────────────────────────────────────
 function boot() {
   renderTags();
@@ -676,6 +711,7 @@ function boot() {
   $('#form-composition').addEventListener('submit', handleMacerate);
 
   wireCardHover();
+  wireBottleHover();
 
   // Keep the vellum halo glued to the card across viewport changes.
   window.addEventListener('resize', positionVellumHalo);

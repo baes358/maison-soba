@@ -24,6 +24,15 @@
   font-display: swap;
 }
 
+/* CS Maison Sezanne — used ONLY for the perfume name on la carte. */
+@font-face {
+  font-family: 'Maison Sezanne';
+  src: url('./fonts/CS-MaisonSezanne-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
 /* ─── tokens ─────────────────────────────────────────────────────────── */
 :root {
   /* Ground — warm cream parchment */
@@ -419,7 +428,7 @@ body {
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 28px;
   background: transparent;
   border: none;
   border-radius: 0;
@@ -589,8 +598,68 @@ body {
 }
 
 .bottle-line--reveal {
+  --b-rx: 0deg;
+  --b-ry: 0deg;
   width: 160px;
   opacity: 1;
+  cursor: pointer;
+  transform: rotateX(var(--b-rx)) rotateY(var(--b-ry));
+  transform-origin: 50% 60%;
+  transition: transform 220ms var(--ease), filter 360ms var(--ease);
+  filter: drop-shadow(0 4px 10px oklch(0.30 0.06 30 / 0.10));
+  will-change: transform;
+}
+
+/* While the cursor is over the bottle, kill the transition so the tilt
+   tracks the pointer instead of trailing behind it. */
+.bottle-line--reveal.is-tracking {
+  transition: filter 360ms var(--ease);
+}
+
+.bottle-line--reveal:hover {
+  filter: drop-shadow(0 14px 28px oklch(0.30 0.06 30 / 0.28));
+}
+
+/* Stage wraps the bottle: gives it perspective for the inner rotation
+   and a slow ambient float so the bottle "breathes" even when idle. */
+.bottle-stage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  perspective: 900px;
+  animation: bottle-float 6.5s ease-in-out infinite alternate;
+  transform-origin: 50% 100%;
+}
+
+.bottle-stage:hover {
+  animation-duration: 4s;
+}
+
+@keyframes bottle-float {
+  0%   { transform: translateY(0)    rotate(-0.4deg); }
+  50%  { transform: translateY(-5px) rotate(0deg); }
+  100% { transform: translateY(-9px) rotate(0.5deg); }
+}
+
+/* Liquid sloshes gently while the bottle is hovered. */
+.bottle-line--reveal:hover #reveal-liquid {
+  animation: liquid-slosh 1.8s ease-in-out infinite alternate;
+  transform-origin: 50% 100%;
+  transform-box: fill-box;
+}
+
+@keyframes liquid-slosh {
+  0%   { transform: translateY(0)    skewY(0deg); }
+  50%  { transform: translateY(-2px) skewY(-0.6deg); }
+  100% { transform: translateY(-5px) skewY(0.6deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bottle-stage,
+  .bottle-line--reveal:hover #reveal-liquid {
+    animation: none;
+  }
+  .bottle-line--reveal { transform: none !important; }
 }
 
 .anchoring-liquid {
@@ -614,25 +683,60 @@ body {
   min-height: 1.6em;
 }
 
-/* The orb-style aura ring behind the bottle while anchoring. */
+/* Dreamy family-tinted aura behind the anchoring stack. Big, soft, and
+   drifting on a long irregular loop so the room feels alive while the
+   AI is composing. An inner warm wash drifts on its own timing so the
+   two motions create parallax instead of a single uniform pulse. */
 .anchoring-orb {
   position: absolute;
-  width: 280px;
-  height: 280px;
+  top: 50%;
+  left: 50%;
+  width: 720px;
+  height: 720px;
+  margin: -360px 0 0 -360px;
   pointer-events: none;
   border-radius: 50%;
-  filter: blur(40px) saturate(1.1);
-  opacity: 0.55;
-  animation: orb-pulse 3.8s ease-in-out infinite alternate;
+  filter: blur(80px) saturate(1.2);
+  opacity: 0.65;
+  z-index: 0;
+  animation: anchoring-orb-drift 18s ease-in-out infinite;
+  will-change: transform, opacity;
 }
 
-@keyframes orb-pulse {
-  0%   { transform: scale(0.94); opacity: 0.45; }
-  100% { transform: scale(1.06); opacity: 0.70; }
+.anchoring-orb::after {
+  content: '';
+  position: absolute;
+  inset: 18%;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 50% 50%,
+    oklch(0.95 0.04 70 / 0.55),
+    oklch(0.90 0.05 55 / 0.20) 45%,
+    transparent 70%
+  );
+  filter: blur(30px);
+  mix-blend-mode: screen;
+  animation: anchoring-orb-inner 14s ease-in-out infinite alternate;
 }
 
+@keyframes anchoring-orb-drift {
+  0%   { transform: translate(-6%, -2%) scale(1.00); opacity: 0.55; }
+  20%  { transform: translate( 8%, -7%) scale(1.10); opacity: 0.74; }
+  40%  { transform: translate(12%,  5%) scale(0.94); opacity: 0.58; }
+  60%  { transform: translate( 2%, 10%) scale(1.07); opacity: 0.72; }
+  80%  { transform: translate(-10%, 4%) scale(0.98); opacity: 0.62; }
+  100% { transform: translate(-6%, -2%) scale(1.00); opacity: 0.55; }
+}
+
+@keyframes anchoring-orb-inner {
+  0%   { transform: translate(-10%, 6%) scale(1.00); opacity: 0.55; }
+  100% { transform: translate( 8%, -8%) scale(0.88); opacity: 0.90; }
+}
+
+/* Keep the bottle/text/monogram above the orb. */
 .screen--anchoring .stack {
   position: relative;
+  z-index: 1;
 }
 
 /* ─── la carte: layout shell ─────────────────────────────────────────── */
@@ -875,11 +979,13 @@ body {
 }
 
 .card__name {
-  font-family: var(--font-sans);
-  font-weight: 300;
-  font-size: 46px;
-  line-height: 0.98;
-  letter-spacing: -0.025em;
+  /* The card title is the one place we depart from Switzer — Maison
+     Sezanne carries the signature feel of the perfume name. */
+  font-family: 'Maison Sezanne', 'Snell Roundhand', 'EB Garamond', Georgia, serif;
+  font-weight: 400;
+  font-size: 64px;
+  line-height: 1;
+  letter-spacing: -0.015em;
   color: var(--accent);
   margin: 14px 0 8px;
 }
@@ -1088,7 +1194,7 @@ body {
   }
   .carte-left { height: auto; gap: 20px; }
   .card { max-height: none; padding: 36px 32px 28px; }
-  .card__name { font-size: 48px; }
+  .card__name { font-size: 56px; }
 }
 
 @media (max-width: 520px) {
@@ -1099,7 +1205,7 @@ body {
   .ms-monogram--large { width: 44px; }
   .form-confidence { gap: 12px; }
   .card { padding: 32px 24px 24px; }
-  .card__name { font-size: 44px; }
+  .card__name { font-size: 50px; }
   .card__pyramid { padding: 14px 8px; gap: 8px; }
   .card__attrs { gap: 14px 16px; }
 }
