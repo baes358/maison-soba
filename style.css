@@ -676,20 +676,48 @@ body {
   }
 }
 
-/* La carte reveal: the bottle's liquid rises from empty to its resting
-   half-full level when the screen activates. Once full, the rect rests
-   in place — the SMIL animateTransform inside #liquid-grad keeps the
-   colour bands swirling continuously. The HTML rect's default y/height
-   are the resting state, so reduced-motion users see a filled bottle
-   without any rise animation. */
+/* La carte reveal: the bottle's liquid rises from empty up to ~80% of
+   the bottle interior when the screen activates. Once full, the rect
+   rests in place — the SMIL animateTransform inside #liquid-grad keeps
+   the colour bands swirling continuously, and the bubbles SMIL keeps
+   ascending. The rect's resting bottom sits past the bottle clip at
+   y≈200 so the blurred bottom edge gets cropped sharp by the bottle
+   silhouette (only the top meniscus stays dreamy). The HTML rect's
+   default y/height are the resting state, so reduced-motion users see
+   a filled bottle without any rise animation. */
 .screen--carte.active #reveal-liquid {
   animation: reveal-liquid-fill 1.6s var(--ease) backwards;
   animation-delay: 360ms;
 }
 
 @keyframes reveal-liquid-fill {
-  from { y: 172px; height: 0px; }
-  to   { y: 100px; height: 72px; }
+  from { y: 200px; height: 0px; }
+  to   { y: 76px;  height: 124px; }
+}
+
+/* Bubbles fade in only after the liquid has finished rising, so they
+   don't appear in mid-air against the empty bottle during the reveal.
+   The SMIL animations on each circle run continuously underneath; the
+   group's opacity is what gates visibility. */
+.bubbles {
+  opacity: 0;
+}
+
+.bubble {
+  filter: blur(0.6px);
+}
+
+.screen--carte.active .bubbles {
+  animation: bubbles-appear 800ms var(--ease) forwards;
+  animation-delay: 2s;
+}
+
+@keyframes bubbles-appear {
+  to { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bubbles { display: none; }
 }
 
 .anchoring-liquid {
