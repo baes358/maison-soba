@@ -373,7 +373,6 @@ function renderCarte(c) {
   // selections read as a single smoothly blended composition. AI palette
   // is the fallback per stop if a family can't be resolved.
   const headFam  = FAMILY_BY_HEAD[state.head];
-  const heartFam = FAMILY_BY_HEART[state.heart];
   const baseFam  = FAMILY_BY_BASE[state.base];
   const topColor = (headFam  && FAMILY_LIQUID[headFam]?.top)  || c.design_tokens.palette.liquid_top;
   const midColor = (heartFam && FAMILY_LIQUID[heartFam]?.mid) || c.design_tokens.palette.liquid_top;

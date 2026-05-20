@@ -815,9 +815,11 @@ body {
   overflow: hidden;
   background:
     linear-gradient(168deg,
-      oklch(0.965 0.022 78) 0%,
-      oklch(0.92 0.030 72) 60%,
-      oklch(0.88 0.034 68) 100%);
+      oklch(0.975 0.016 80 / 0.78) 0%,
+      oklch(0.945 0.022 74 / 0.74) 55%,
+      oklch(0.915 0.028 68 / 0.72) 100%);
+  backdrop-filter: blur(14px) saturate(1.08);
+  -webkit-backdrop-filter: blur(14px) saturate(1.08);
   border: 1px solid var(--vellum-edge);
   border-radius: 8px;
   box-shadow: var(--shadow-card);
@@ -833,14 +835,20 @@ body {
   will-change: transform;
 }
 
-/* Vellum paper grain — fine multiply noise over the gradient. */
+/* Vellum paper grain — fine multiply noise + long parchment fibers. The
+   second layer uses anisotropic turbulence (low X / high Y baseFrequency)
+   to stretch the noise into faint vertical fibers, the way real vellum
+   reads when held up to light. */
 .card::before {
   content: '';
   position: absolute; inset: 0;
   pointer-events: none;
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.45  0 0 0 0 0.36  0 0 0 0 0.25  0 0 0 0.55 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
-  background-size: 220px 220px;
-  opacity: 0.22;
+  background-image:
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='480' height='480'><filter id='f'><feTurbulence type='fractalNoise' baseFrequency='0.012 0.55' numOctaves='2' seed='4' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.40  0 0 0 0 0.32  0 0 0 0 0.22  0 0 0 0.45 0'/></filter><rect width='100%' height='100%' filter='url(%23f)'/></svg>"),
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.45  0 0 0 0 0.36  0 0 0 0 0.25  0 0 0 0.55 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  background-size: 480px 480px, 220px 220px;
+  background-repeat: repeat, repeat;
+  opacity: 0.28;
   mix-blend-mode: multiply;
 }
 
@@ -891,6 +899,13 @@ body {
   transition: none !important;
   max-height: none !important;
   overflow: visible !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  background:
+    linear-gradient(168deg,
+      oklch(0.975 0.016 80) 0%,
+      oklch(0.945 0.022 74) 55%,
+      oklch(0.915 0.028 68) 100%) !important;
 }
 .card.is-capturing::after {
   background:
