@@ -12,6 +12,13 @@
 </head>
 <body>
 
+<div class="app">
+
+  <!-- Atmosphere — persistent ground, ambient aura, paper grain. -->
+  <div class="atmosphere"></div>
+  <div class="ambient-aura aura-gourmand" id="ambient-aura"></div>
+  <div class="paper-grain"></div>
+
   <!-- ─────────────────────────────── LANDING ─────────────────────────────── -->
   <section class="screen screen--landing active" data-screen="landing">
     <div class="stack stack--center">
@@ -101,29 +108,31 @@
       <p class="body">Build the three layers: head, heart, and base.</p>
 
       <form class="form-composition" id="form-composition">
-        <fieldset class="tag-group" data-layer="head">
-          <legend class="tag-group__legend">
-            <span class="tag-group__title">THE HEAD</span>
-            <span class="tag-group__sub">what rises first.</span>
-          </legend>
-          <div class="tag-row" role="radiogroup" aria-label="Head"></div>
-        </fieldset>
+        <div class="composition-grid">
+          <fieldset class="tag-group" data-layer="head">
+            <legend class="tag-group__legend">
+              <span class="tag-group__title">THE HEAD</span>
+              <span class="tag-group__sub">what rises first.</span>
+            </legend>
+            <div class="tag-row" role="radiogroup" aria-label="Head"></div>
+          </fieldset>
 
-        <fieldset class="tag-group" data-layer="heart">
-          <legend class="tag-group__legend">
-            <span class="tag-group__title">THE HEART</span>
-            <span class="tag-group__sub">what unfolds.</span>
-          </legend>
-          <div class="tag-row" role="radiogroup" aria-label="Heart"></div>
-        </fieldset>
+          <fieldset class="tag-group" data-layer="heart">
+            <legend class="tag-group__legend">
+              <span class="tag-group__title">THE HEART</span>
+              <span class="tag-group__sub">what unfolds.</span>
+            </legend>
+            <div class="tag-row" role="radiogroup" aria-label="Heart"></div>
+          </fieldset>
 
-        <fieldset class="tag-group" data-layer="base">
-          <legend class="tag-group__legend">
-            <span class="tag-group__title">THE BASE</span>
-            <span class="tag-group__sub">what remains.</span>
-          </legend>
-          <div class="tag-row" role="radiogroup" aria-label="Base"></div>
-        </fieldset>
+          <fieldset class="tag-group" data-layer="base">
+            <legend class="tag-group__legend">
+              <span class="tag-group__title">THE BASE</span>
+              <span class="tag-group__sub">what remains.</span>
+            </legend>
+            <div class="tag-row" role="radiogroup" aria-label="Base"></div>
+          </fieldset>
+        </div>
 
         <button type="submit" class="btn" id="btn-macerate" disabled>
           macerate <span class="btn__arrow">→</span>
@@ -138,6 +147,9 @@
       <div class="ms-monogram" aria-label="Maison Sillage">
         <img src="media/ms-monogram.svg" alt="Maison Sillage" class="ms-monogram__mark">
       </div>
+
+      <!-- Soft aura ring behind the bottle — picks up the current family. -->
+      <div class="anchoring-orb aura-gourmand" id="anchoring-orb" aria-hidden="true"></div>
 
       <!-- Bottle silhouette during loading. The shape cycles through all
            six silhouettes (driven by app.js) while a ghost-ink liquid rises
@@ -216,53 +228,61 @@
         </div>
       </div>
 
-      <article class="card" id="fragrance-card">
-        <div class="card__seal" aria-hidden="true">
-          <img src="media/ms-monogram.svg" alt="" class="card__seal-mark">
-        </div>
+      <div class="carte-card-wrap">
+        <!-- The aura halo sits behind the vellum card, tinted to the
+             composition's olfactive family. Sized via JS to match the card. -->
+        <div class="vellum-aura aura-oriental" id="vellum-aura" aria-hidden="true"></div>
 
-        <p class="card__dedication">AN ORIGINAL COMPOSITION FOR <span id="card-dedicate-name">SOBA</span></p>
-
-        <img src="media/stars.svg" alt="" class="card__stars" aria-hidden="true">
-
-        <h3 class="card__name" id="card-name">Folded Light</h3>
-        <p class="card__tagline" id="card-tagline">A library in late autumn, and the smell of old paper and tea growing cold…</p>
-
-        <dl class="card__pyramid">
-          <div class="card__layer">
-            <dt class="card__layer-label">HEAD</dt>
-            <dd class="card__layer-notes" id="card-top">—</dd>
+        <article class="card" id="fragrance-card">
+          <div class="card__seal" aria-hidden="true">
+            <img src="media/ms-monogram.svg" alt="" class="card__seal-mark">
           </div>
-          <div class="card__layer">
-            <dt class="card__layer-label">HEART</dt>
-            <dd class="card__layer-notes" id="card-heart">—</dd>
-          </div>
-          <div class="card__layer">
-            <dt class="card__layer-label">BASE</dt>
-            <dd class="card__layer-notes" id="card-base">—</dd>
-          </div>
-        </dl>
 
-        <dl class="card__attrs">
-          <div class="card__attr"><dt>MOOD</dt><dd id="card-mood">—</dd></div>
-          <div class="card__attr"><dt>LONGEVITY</dt><dd id="card-longevity">—</dd></div>
-          <div class="card__attr"><dt>PROJECTION</dt><dd id="card-projection">—</dd></div>
-          <div class="card__attr"><dt>INTENSITY</dt><dd id="card-intensity">—</dd></div>
-        </dl>
+          <p class="card__dedication">AN ORIGINAL COMPOSITION FOR <span id="card-dedicate-name">SOBA</span></p>
 
-        <img src="media/stars.svg" alt="" class="card__stars" aria-hidden="true">
+          <img src="media/stars.svg" alt="" class="card__stars" aria-hidden="true">
 
-        <p class="card__edition" id="card-edition">Edition N° —</p>
-        <p class="card__cities">PARIS &nbsp;|&nbsp; NEW YORK</p>
-        <p class="card__footnote">A composition by a patient intelligence, trained in perfumery.</p>
-      </article>
+          <h3 class="card__name" id="card-name">Folded Light</h3>
+          <p class="card__tagline" id="card-tagline">A library in late autumn, and the smell of old paper and tea growing cold…</p>
+
+          <dl class="card__pyramid">
+            <div class="card__layer">
+              <dt class="card__layer-label">HEAD</dt>
+              <dd class="card__layer-notes" id="card-top">—</dd>
+            </div>
+            <div class="card__layer">
+              <dt class="card__layer-label">HEART</dt>
+              <dd class="card__layer-notes" id="card-heart">—</dd>
+            </div>
+            <div class="card__layer">
+              <dt class="card__layer-label">BASE</dt>
+              <dd class="card__layer-notes" id="card-base">—</dd>
+            </div>
+          </dl>
+
+          <dl class="card__attrs">
+            <div class="card__attr"><dt>MOOD</dt><dd id="card-mood">—</dd></div>
+            <div class="card__attr"><dt>LONGEVITY</dt><dd id="card-longevity">—</dd></div>
+            <div class="card__attr"><dt>PROJECTION</dt><dd id="card-projection">—</dd></div>
+            <div class="card__attr"><dt>INTENSITY</dt><dd id="card-intensity">—</dd></div>
+          </dl>
+
+          <img src="media/stars.svg" alt="" class="card__stars" aria-hidden="true">
+
+          <p class="card__edition" id="card-edition">Edition N° —</p>
+          <p class="card__cities">PARIS &nbsp;|&nbsp; NEW YORK</p>
+          <p class="card__footnote">A composition by a patient intelligence, trained in perfumery.</p>
+        </article>
+      </div>
     </div>
   </section>
+
+</div><!-- /.app -->
 
   <!-- ──────────────────────────────── ERROR ──────────────────────────────── -->
   <!-- Inline error banner — fades in over whatever screen is active. -->
   <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 
-  <script type="module" src="app.js?v=9"></script>
+  <script type="module" src="app.js?v=10"></script>
 </body>
 </html>

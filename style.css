@@ -1,11 +1,11 @@
 /* ─────────────────────────────────────────────────────────────────────────
    Maison Sillage — stylesheet
-   Pure neutrals (ink-on-paper) for the UI shell; AI-generated palette
-   only appears in the bottle liquid + card accent.
-   Typography: CS Maison Sezanne for the script, Switzer for everything else.
+   Vellum + aura design system in light mode. Cream parchment ground, single
+   warm light source top-left, paper-ticket chips, vellum card with aura halo.
+   Typography is Switzer throughout — no second face.
    ───────────────────────────────────────────────────────────────────── */
 
-/* ─── local webfonts ─────────────────────────────────────────────────── */
+/* ─── local webfonts (Switzer only) ─────────────────────────────────── */
 @font-face {
   font-family: 'Switzer';
   src: url('./fonts/Switzer-Variable.ttf') format('truetype-variations'),
@@ -24,43 +24,77 @@
   font-display: swap;
 }
 
-@font-face {
-  font-family: 'Maison Sezanne';
-  src: url('./fonts/CS-MaisonSezanne-Regular.ttf') format('truetype');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-
 /* ─── tokens ─────────────────────────────────────────────────────────── */
 :root {
-  --paper:        #F2F1EE;      /* the light-grey workshop wall */
-  --paper-card:   #FAFAF8;      /* slightly lighter for the card surface */
-  --ink:          #1A1A1A;      /* near-black for body text */
-  --ink-soft:     #2A2A2A;      /* near-black, but breathing */
-  --hairline:     #1A1A1A;      /* border lines on buttons/tags */
-  --muted:        #8A8A86;      /* secondary text, microcap labels */
-  --muted-soft:   #C7C5C0;      /* placeholder text */
-  --accent:       #1A1A1A;      /* default; overridden per composition */
+  /* Ground — warm cream parchment */
+  --ground-light:  oklch(0.97 0.014 82);
+  --ground:        oklch(0.945 0.018 80);
+  --ground-mid:    oklch(0.91 0.024 76);
+  --ground-deep:   oklch(0.85 0.032 70);
+  --halo:          oklch(0.99 0.028 88);
 
-  --font-script:  'Maison Sezanne', 'Snell Roundhand', cursive;
-  --font-sans:    'Switzer', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  /* Ink */
+  --ink:           oklch(0.22 0.050 26);
+  --ink-deep:      oklch(0.28 0.080 22);
+  --ink-soft:      oklch(0.38 0.040 30);
+  --ink-mute:      oklch(0.50 0.030 35);
+  --ink-quiet:     oklch(0.60 0.022 40);
+  --ink-faint:     oklch(0.72 0.018 45);
+
+  /* Vellum — the card */
+  --vellum-a:      oklch(0.955 0.022 78);
+  --vellum-b:      oklch(0.91 0.030 72);
+  --vellum-edge:   oklch(0.72 0.030 60 / 0.45);
+
+  /* Sheets — frosted panels on cream */
+  --sheet:         oklch(1 0 0 / 0.42);
+  --sheet-edge:    oklch(0.60 0.025 55 / 0.18);
+
+  /* Aura cores (center → outer) */
+  --aura-floral-a:   oklch(0.78 0.18 18);
+  --aura-floral-b:   oklch(0.62 0.18 6);
+  --aura-oriental-a: oklch(0.62 0.16 32);
+  --aura-oriental-b: oklch(0.40 0.14 18);
+  --aura-marine-a:   oklch(0.80 0.10 210);
+  --aura-marine-b:   oklch(0.55 0.10 220);
+  --aura-woody-a:    oklch(0.70 0.12 70);
+  --aura-woody-b:    oklch(0.46 0.10 50);
+  --aura-citrus-a:   oklch(0.88 0.14 95);
+  --aura-citrus-b:   oklch(0.66 0.14 75);
+  --aura-gourmand-a: oklch(0.82 0.10 60);
+  --aura-gourmand-b: oklch(0.56 0.09 35);
+
+  /* Type — Switzer only */
+  --font-sans:     'Switzer', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  /* Legacy alias: anything previously asking for the script face gets Switzer. */
+  --font-script:   var(--font-sans);
+
+  /* Motion */
+  --ease:          cubic-bezier(0.16, 0.84, 0.30, 1);
+  --t-fast:        220ms;
+  --t-med:         360ms;
+  --t-slow:        560ms;
+
+  /* Legacy color aliases (so app.js's --accent override still resolves
+     cleanly against the new vocabulary) */
+  --paper:         var(--ground);
+  --paper-card:    var(--vellum-a);
+  --ink-soft:      var(--ink-soft);
+  --hairline:      oklch(0.45 0.04 35 / 0.30);
+  --muted:         var(--ink-mute);
+  --muted-soft:    var(--ink-faint);
+  --accent:        var(--ink-deep);
 
   --shadow-card:
-      0 1px 2px rgba(20, 20, 20, 0.04),
-      0 8px 24px rgba(20, 20, 20, 0.08),
-      0 24px 64px rgba(20, 20, 20, 0.06);
-
-  --ease:         cubic-bezier(0.4, 0, 0.2, 1);
-  --t-fast:       180ms;
-  --t-med:        320ms;
-  --t-slow:       480ms;
+      inset 0 1px 0 rgba(255, 250, 240, 0.7),
+      inset 0 -1px 0 oklch(0.65 0.04 50 / 0.20),
+      0 1px 0 oklch(0.30 0.06 30 / 0.10),
+      0 40px 90px -28px oklch(0.30 0.08 30 / 0.30),
+      0 12px 30px -10px oklch(0.30 0.05 30 / 0.18);
 }
 
 /* ─── base ───────────────────────────────────────────────────────────── */
-html, body {
-  height: 100%;
-}
+html, body { height: 100%; }
 
 body {
   font-family: var(--font-sans);
@@ -68,36 +102,101 @@ body {
   font-size: 16px;
   line-height: 1.55;
   color: var(--ink);
-  background: var(--paper);
+  background: var(--ground);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
+  overflow: hidden;
 }
 
-/* ─── screen system ──────────────────────────────────────────────────── */
-.screen {
+/* ─── atmosphere ─────────────────────────────────────────────────────── */
+/* Persistent ground that sits behind every screen. The atmosphere stays
+   put across navigation — only the aura behind it shifts color. */
+.app {
   position: fixed;
   inset: 0;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  padding: 48px 24px;
-  overflow-y: auto;
+  overflow: hidden;
+  background: var(--ground);
+}
+
+.atmosphere {
+  position: absolute; inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(70% 60% at 18% -8%, var(--halo) 0%, var(--ground-light) 32%, var(--ground) 62%, var(--ground-mid) 95%),
+    var(--ground);
+}
+
+.atmosphere::after {
+  content: '';
+  position: absolute; inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(50% 40% at 100% 100%, oklch(0.78 0.04 50 / 0.20), transparent 70%),
+    radial-gradient(40% 30% at 0% 100%, oklch(0.72 0.05 30 / 0.10), transparent 70%);
+}
+
+.paper-grain {
+  position: absolute; inset: 0;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='260' height='260'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.45  0 0 0 0 0.36  0 0 0 0 0.25  0 0 0 0.4 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  background-size: 260px 260px;
+  opacity: 0.10;
+  mix-blend-mode: multiply;
+}
+
+/* The ambient aura — large blurred orb behind everything, tinted by
+   the current selection. Drifts so the room feels alive. */
+.ambient-aura {
+  position: absolute;
+  width: 1100px; height: 1100px;
+  left: 50%; top: 100%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  filter: blur(80px) saturate(1.0);
+  opacity: 0.32;
+  pointer-events: none;
+  transition: opacity 1200ms var(--ease), background 1500ms var(--ease);
+  animation: aura-drift 22s ease-in-out infinite alternate;
+}
+
+@keyframes aura-drift {
+  0%   { transform: translate(-50%, -50%) scale(1); }
+  50%  { transform: translate(-48%, -52%) scale(1.04); }
+  100% { transform: translate(-52%, -48%) scale(0.97); }
+}
+
+/* Aura family backgrounds — driven by JS via the .aura-* class. */
+.aura-floral   { background: radial-gradient(circle at 50% 45%, var(--aura-floral-a)   0%, var(--aura-floral-b)   40%, transparent 72%); }
+.aura-oriental { background: radial-gradient(circle at 50% 45%, var(--aura-oriental-a) 0%, var(--aura-oriental-b) 40%, transparent 72%); }
+.aura-marine   { background: radial-gradient(circle at 50% 45%, var(--aura-marine-a)   0%, var(--aura-marine-b)   40%, transparent 72%); }
+.aura-woody    { background: radial-gradient(circle at 50% 45%, var(--aura-woody-a)    0%, var(--aura-woody-b)    40%, transparent 72%); }
+.aura-citrus   { background: radial-gradient(circle at 50% 45%, var(--aura-citrus-a)   0%, var(--aura-citrus-b)   40%, transparent 72%); }
+.aura-gourmand { background: radial-gradient(circle at 50% 45%, var(--aura-gourmand-a) 0%, var(--aura-gourmand-b) 40%, transparent 72%); }
+
+/* ─── screens ────────────────────────────────────────────────────────── */
+.screen {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  padding: 80px 36px;
   opacity: 0;
-  transition: opacity var(--t-med) var(--ease);
+  pointer-events: none;
+  transition: opacity 900ms var(--ease);
+  overflow-y: auto;
+  z-index: 1;
 }
 
 .screen.active {
-  display: flex;
   opacity: 1;
+  pointer-events: auto;
 }
 
 .stack {
   display: flex;
   flex-direction: column;
-  gap: 32px;
+  gap: 24px;
   width: 100%;
-  max-width: 520px;
+  max-width: 560px;
 }
 
 .stack--center {
@@ -106,22 +205,22 @@ body {
 }
 
 .stack--wide {
-  max-width: 720px;
+  max-width: 1040px;
 }
 
 /* ─── monogram ───────────────────────────────────────────────────────── */
-/* The monogram is an SVG asset in /media/ms-monogram.svg. Wrapper sizes
-   it; the <img> fills the wrapper width. */
 .ms-monogram {
-  width: 96px;
+  width: 36px;
   height: auto;
   line-height: 0;
   color: var(--ink);
   user-select: none;
+  opacity: 0.78;
 }
 
 .ms-monogram--large {
-  width: 200px;
+  width: 56px;
+  opacity: 1;
 }
 
 .ms-monogram__mark {
@@ -130,23 +229,25 @@ body {
   height: auto;
 }
 
-/* ─── typography ─────────────────────────────────────────────────────── */
+/* ─── typography (Switzer throughout) ────────────────────────────────── */
 .display {
   font-family: var(--font-sans);
-  font-weight: 500;
-  font-size: 28px;
-  line-height: 1.1;
-  letter-spacing: -0.01em;
+  font-weight: 300;
+  font-size: 52px;
+  line-height: 1.02;
+  letter-spacing: -0.02em;
   color: var(--ink);
 }
 
 .display--lg {
-  font-size: 36px;
+  font-size: 78px;
+  letter-spacing: -0.03em;
 }
 
 .body {
   font-family: var(--font-sans);
   font-weight: 400;
+  font-style: italic;
   font-size: 16px;
   line-height: 1.55;
   color: var(--ink-soft);
@@ -156,43 +257,58 @@ body {
 .body--lead {
   font-size: 17px;
   line-height: 1.6;
+  max-width: 460px;
 }
 
 /* ─── buttons + links ────────────────────────────────────────────────── */
 .btn {
   appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  height: 48px;
+  padding: 0 28px;
   font-family: var(--font-sans);
   font-weight: 400;
-  font-size: 16px;
-  letter-spacing: 0;
+  font-size: 11.5px;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
   color: var(--ink);
-  background: transparent;
-  border: 1px solid var(--hairline);
-  padding: 14px 26px;
+  background: oklch(1 0 0 / 0.5);
+  border: 1px solid oklch(0.40 0.05 30 / 0.35);
+  border-radius: 8px;
   cursor: pointer;
-  transition: background-color var(--t-fast) var(--ease),
-              color var(--t-fast) var(--ease),
-              opacity var(--t-fast) var(--ease);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: inset 0 1px 0 oklch(1 0 0 / 0.5);
+  transition: all 280ms var(--ease);
 }
 
 .btn:hover:not(:disabled) {
   background: var(--ink);
-  color: var(--paper);
+  color: var(--ground-light);
+  border-color: var(--ink);
+  letter-spacing: 0.38em;
 }
 
 .btn:disabled {
-  opacity: 0.32;
+  opacity: 0.35;
   cursor: not-allowed;
 }
 
 .btn--small {
-  padding: 10px 22px;
-  font-size: 14px;
+  height: 40px;
+  padding: 0 20px;
+  font-size: 10.5px;
+  letter-spacing: 0.30em;
 }
 
 .btn__arrow {
   display: inline-block;
-  margin-left: 4px;
+  font-size: 14px;
+  letter-spacing: 0;
+  opacity: 0.85;
   transition: transform var(--t-fast) var(--ease);
 }
 
@@ -200,16 +316,19 @@ body {
   transform: translateX(2px);
 }
 
-/* The down-arrow variant signals "download" on the archive save buttons.
-   On hover it dips downward instead of nudging right. */
 .btn:hover:not(:disabled) .btn__arrow--down {
   transform: translateY(2px);
 }
 
 .link {
-  color: var(--ink-soft);
+  font-family: var(--font-sans);
+  font-size: 11px;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
   text-decoration: none;
-  font-size: 14px;
+  cursor: pointer;
+  background: none; border: none; padding: 0;
   transition: color var(--t-fast) var(--ease);
 }
 
@@ -218,129 +337,202 @@ body {
 }
 
 .link--quiet {
-  color: var(--muted);
+  color: var(--ink-quiet);
 }
 
 /* ─── form inputs ────────────────────────────────────────────────────── */
 .form-confidence {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 14px;
   width: 100%;
-  max-width: 560px;
-  align-items: center;
+  max-width: 520px;
+  align-items: stretch;
 }
 
 .input {
   width: 100%;
+  display: block;
   font-family: var(--font-sans);
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 400;
   color: var(--ink);
-  background: transparent;
-  border: 1px solid var(--hairline);
+  background: var(--sheet);
+  border: 1px solid var(--sheet-edge);
+  border-radius: 6px;
   padding: 16px 18px;
   outline: none;
-  transition: border-color var(--t-fast) var(--ease);
   resize: none;
+  transition: border-color 200ms, background 200ms, box-shadow 200ms;
 }
 
 .input::placeholder {
-  color: var(--muted-soft);
+  color: var(--ink-faint);
   font-style: italic;
 }
 
 .input:focus {
-  border-color: var(--ink);
+  border-color: oklch(0.40 0.05 30 / 0.6);
+  background: oklch(1 0 0 / 0.65);
+  box-shadow: 0 0 0 4px oklch(0.40 0.05 30 / 0.06);
 }
 
 .input--memory {
   font-style: italic;
-  min-height: 80px;
+  min-height: 100px;
 }
 
 .form-help {
+  font-family: var(--font-sans);
+  font-style: italic;
   font-size: 13px;
   color: var(--ink-soft);
+  opacity: 0.85;
   text-align: center;
   margin: 4px 0 8px;
 }
 
-/* ─── composition tags ───────────────────────────────────────────────── */
+.form-confidence .btn {
+  align-self: center;
+  margin-top: 14px;
+}
+
+/* ─── composition: three frosted sheets ──────────────────────────────── */
 .form-composition {
   display: flex;
   flex-direction: column;
-  gap: 32px;
+  gap: 28px;
   width: 100%;
   align-items: center;
 }
 
+.composition-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 22px;
+  width: 100%;
+}
+
+/* The fieldset is a transparent two-row stack: legend sits outside the
+   chip container; the .tag-row beneath it is the visible frosted sheet. */
 .tag-group {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  background: transparent;
   border: none;
-  margin: 0;
+  border-radius: 0;
   padding: 0;
-  width: fit-content;
-  max-width: 100%;
+  margin: 0;
+  box-shadow: none;
+  width: auto;
+  max-width: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
 }
 
 .tag-group__legend {
   display: flex;
   flex-direction: column;
-  gap: 2px;
-  margin-bottom: 12px;
+  gap: 4px;
+  margin: 0;
   text-align: center;
   align-items: center;
+  width: 100%;
 }
 
 .tag-group__title {
-  font-size: 14px;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  color: var(--ink);
-}
-
-.tag-group__sub {
-  font-size: 13px;
+  font-family: var(--font-sans);
   font-weight: 400;
+  font-size: 11px;
+  letter-spacing: 0.30em;
+  text-transform: uppercase;
   color: var(--ink-soft);
 }
 
+.tag-group__sub {
+  font-family: var(--font-sans);
+  font-style: italic;
+  font-size: 13px;
+  color: var(--ink-soft);
+  opacity: 0.65;
+}
+
+/* The chip container is the visible frosted sheet — fits the chips it
+   holds (no forced height, no separator line). */
 .tag-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 0;
-  border: 1px solid var(--hairline);
-  width: fit-content;
-  max-width: 100%;
+  gap: 8px;
+  width: 100%;
+  justify-content: center;
+  align-content: flex-start;
+  padding: 22px 20px;
+  background: var(--sheet);
+  backdrop-filter: blur(10px) saturate(1.1);
+  -webkit-backdrop-filter: blur(10px) saturate(1.1);
+  border: 1px solid var(--sheet-edge);
+  border-radius: 10px;
+  box-shadow:
+    inset 0 1px 0 oklch(1 0 0 / 0.5),
+    0 1px 0 oklch(0 0 0 / 0.04),
+    0 18px 50px -20px oklch(0.30 0.05 30 / 0.22);
 }
 
+/* ─── chips (paper tickets) ──────────────────────────────────────────── */
 .tag {
   appearance: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  height: 36px;
+  padding: 0 16px;
   font-family: var(--font-sans);
-  font-size: 14px;
   font-weight: 400;
-  color: var(--ink);
-  background: transparent;
-  border: none;
-  border-right: 1px solid var(--hairline);
-  padding: 8px 16px;
+  font-size: 11px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  background: oklch(1 0 0 / 0.42);
+  border: 1px solid oklch(0.60 0.025 55 / 0.20);
+  border-radius: 7px;
   cursor: pointer;
-  transition: background-color var(--t-fast) var(--ease),
-              color var(--t-fast) var(--ease);
+  user-select: none;
   white-space: nowrap;
+  box-shadow: inset 0 1px 0 oklch(1 0 0 / 0.5);
+  transition: all 280ms var(--ease);
 }
 
-.tag:last-child {
-  border-right: none;
+.tag::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--ink-faint);
+  flex: 0 0 auto;
+  transition: all 300ms var(--ease);
 }
 
 .tag:hover {
-  background: rgba(26, 26, 26, 0.06);
+  background: oklch(1 0 0 / 0.7);
+  border-color: oklch(0.40 0.05 30 / 0.32);
+  color: var(--ink);
 }
 
 .tag[aria-pressed="true"] {
   background: var(--ink);
-  color: var(--paper);
+  border-color: var(--ink);
+  color: var(--ground-light);
+  box-shadow:
+    inset 0 1px 0 oklch(1 0 0 / 0.08),
+    0 4px 14px -4px oklch(0 0 0 / 0.25),
+    0 0 28px -4px var(--chip-glow, oklch(0.7 0.15 30 / 0.45));
+}
+
+.tag[aria-pressed="true"]::before {
+  background: var(--chip-glow, oklch(0.85 0.15 60));
+  box-shadow: 0 0 8px var(--chip-glow, oklch(0.85 0.15 60));
 }
 
 /* ─── method list ────────────────────────────────────────────────────── */
@@ -350,40 +542,57 @@ body {
   margin: 0;
   display: flex;
   flex-direction: column;
-  gap: 28px;
-  text-align: center;
+  gap: 0;
+  text-align: left;
+  width: 100%;
+  max-width: 480px;
 }
 
+.method-list__item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  text-align: center;
+  padding: 22px 0 24px;
+  border-bottom: 1px solid oklch(0.50 0.04 35 / 0.12);
+}
+
+.method-list__item:first-child { padding-top: 6px; }
+.method-list__item:last-child  { border-bottom: 0; padding-bottom: 6px; }
+
 .method-list__title {
-  font-size: 17px;
-  font-weight: 500;
-  color: var(--ink);
-  margin-bottom: 4px;
+  font-family: var(--font-sans);
+  font-weight: 400;
+  font-size: 22px;
+  line-height: 1.1;
+  letter-spacing: -0.005em;
+  color: var(--ink-deep);
+  margin: 0;
 }
 
 .method-list__body {
-  font-size: 15px;
+  font-family: var(--font-sans);
+  font-style: italic;
+  font-size: 14px;
+  line-height: 1.5;
   color: var(--ink-soft);
 }
 
-.method-list__body em {
-  font-style: italic;
-}
+.method-list__body em { font-style: italic; }
 
 /* ─── anchoring (loading) ────────────────────────────────────────────── */
 .bottle-line {
   width: 110px;
   height: auto;
-  color: var(--ink);
+  color: var(--ink-deep);
+  opacity: 0.78;
 }
 
 .bottle-line--reveal {
   width: 160px;
+  opacity: 1;
 }
 
-/* Liquid fill that loops while the AI is composing. Animating y/height
-   via CSS (supported in all modern browsers) keeps the rise/fall smooth
-   without SMIL. The clipPath does the silhouette-trimming. */
 .anchoring-liquid {
   animation: liquid-fill 2.4s ease-in-out infinite;
 }
@@ -395,33 +604,52 @@ body {
 
 .loading-line {
   font-family: var(--font-sans);
-  font-size: 18px;
+  font-style: italic;
+  font-size: 15px;
   font-weight: 400;
-  color: var(--ink);
+  letter-spacing: 0.01em;
+  color: var(--ink-soft);
+  opacity: 0.85;
   transition: opacity var(--t-slow) var(--ease);
   min-height: 1.6em;
 }
 
+/* The orb-style aura ring behind the bottle while anchoring. */
+.anchoring-orb {
+  position: absolute;
+  width: 280px;
+  height: 280px;
+  pointer-events: none;
+  border-radius: 50%;
+  filter: blur(40px) saturate(1.1);
+  opacity: 0.55;
+  animation: orb-pulse 3.8s ease-in-out infinite alternate;
+}
+
+@keyframes orb-pulse {
+  0%   { transform: scale(0.94); opacity: 0.45; }
+  100% { transform: scale(1.06); opacity: 0.70; }
+}
+
+.screen--anchoring .stack {
+  position: relative;
+}
+
 /* ─── la carte: layout shell ─────────────────────────────────────────── */
-/* The carte is a fixed, non-scrolling screen: two columns that share the
-   viewport height. The card on the right caps at the viewport so it
-   never spills off-screen; the left column centers its own contents. */
 .screen--carte {
   overflow: hidden;
-  padding: 32px 24px;
+  padding: 60px 36px;
 }
 
 .carte-layout {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  column-gap: 64px;
+  column-gap: 80px;
   align-items: center;
   justify-items: center;
   width: 100%;
-  max-width: 1100px;
+  max-width: 1180px;
   height: 100%;
-  /* 3D perspective so the card's hover tilt has depth. Distance is wide
-     enough that the parallax stays subtle, not theme-park. */
   perspective: 1400px;
 }
 
@@ -440,15 +668,14 @@ body {
 }
 
 .carte-header .display {
-  font-weight: 500;
-  font-size: 26px;
-  letter-spacing: -0.005em;
+  font-size: 42px;
 }
 
 .carte-header .body {
-  margin: 8px auto 0;
+  margin: 10px auto 0;
   color: var(--ink-soft);
-  font-size: 15px;
+  font-size: 14.5px;
+  max-width: 320px;
 }
 
 .carte-bottle-col {
@@ -458,22 +685,14 @@ body {
   gap: 24px;
 }
 
-.bottle-line--reveal {
-  width: 180px;
-  height: auto;
-}
-
 .archive-actions {
   display: flex;
-  gap: 10px;
+  gap: 12px;
   align-items: center;
   justify-content: center;
 }
 
-/* ─── la carte: the card itself ──────────────────────────────────────── */
-/* The card is sized to fit the viewport — its max-height is bounded by
-   the screen's vertical space minus padding, so the whole composition
-   stays visible without scrolling. */
+/* ─── la carte: vellum card with aura halo ───────────────────────────── */
 .card {
   --rx: 0deg;
   --ry: 0deg;
@@ -484,18 +703,23 @@ body {
 
   position: relative;
   width: 100%;
-  max-width: 400px;
-  max-height: calc(100vh - 64px);
-  background: var(--paper-card);
-  border: 1px solid var(--ink);
-  padding: 28px 36px 22px;
-  box-shadow: var(--shadow-card);
+  max-width: 420px;
+  max-height: calc(100vh - 120px);
+  padding: 38px 36px 30px;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
   font-size: 12px;
   overflow: hidden;
+  background:
+    linear-gradient(168deg,
+      oklch(0.965 0.022 78) 0%,
+      oklch(0.92 0.030 72) 60%,
+      oklch(0.88 0.034 68) 100%);
+  border: 1px solid var(--vellum-edge);
+  border-radius: 8px;
+  box-shadow: var(--shadow-card);
   transform-style: preserve-3d;
   transform:
     perspective(1400px)
@@ -508,44 +732,58 @@ body {
   will-change: transform;
 }
 
-/* A pale moving highlight that follows the cursor — like light grazing
-   a printed card. Subtle (max 0.12 opacity) so it reads as material,
-   not as glow. */
+/* Vellum paper grain — fine multiply noise over the gradient. */
+.card::before {
+  content: '';
+  position: absolute; inset: 0;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.45  0 0 0 0 0.36  0 0 0 0 0.25  0 0 0 0.55 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  background-size: 220px 220px;
+  opacity: 0.22;
+  mix-blend-mode: multiply;
+}
+
+/* Vellum edge darkening + faint horizontal ruling. The cursor-tracked
+   highlight rides on top of this layer via the .is-hovering filter
+   below. */
 .card::after {
   content: '';
-  position: absolute;
-  inset: 0;
+  position: absolute; inset: 0;
   pointer-events: none;
-  background: radial-gradient(
-    260px circle at var(--glow-x) var(--glow-y),
-    rgba(255, 255, 255, 0.55),
-    rgba(255, 255, 255, 0) 65%
-  );
-  opacity: var(--glow-opacity);
+  background:
+    radial-gradient(
+      260px circle at var(--glow-x) var(--glow-y),
+      rgba(255, 255, 255, calc(0.55 * var(--glow-opacity, 0))),
+      rgba(255, 255, 255, 0) 65%
+    ),
+    radial-gradient(130% 90% at 50% 50%,
+      transparent 50%,
+      oklch(0.55 0.05 45 / 0.18) 92%,
+      oklch(0.40 0.06 35 / 0.30) 100%),
+    repeating-linear-gradient(92deg,
+      transparent 0,
+      transparent 3px,
+      oklch(0.70 0.03 60 / 0.04) 3px,
+      oklch(0.70 0.03 60 / 0.04) 4px);
   transition: opacity 360ms var(--ease);
   mix-blend-mode: soft-light;
 }
 
+.card > * { position: relative; z-index: 1; }
+
 .card:hover {
-  --lift: -6px;
-  --glow-opacity: 0.9;
-  box-shadow:
-    0 2px 4px rgba(20, 20, 20, 0.05),
-    0 16px 36px rgba(20, 20, 20, 0.12),
-    0 40px 96px rgba(20, 20, 20, 0.10);
+  --lift: -8px;
+  --glow-opacity: 1;
 }
 
-/* Hovering tilts via JS-driven --rx/--ry; pointer-tracking handler in
-   app.js. Switch off the slow transition while the user is moving so the
-   tilt feels responsive instead of laggy. */
+/* While the pointer is over the card, the JS handler updates --rx/--ry on
+   every frame. Drop the transform transition so the tilt tracks the cursor
+   instead of trailing behind it; keep the box-shadow transition for the
+   soft hover lift. */
 .card.is-tilting {
   transition: box-shadow 360ms var(--ease);
 }
 
-/* During archive export the card is rasterized to JPG — strip transforms,
-   the cursor-tracked glow, and the drop shadow so the saved image is a
-   neutral flat composition. Lift the viewport height clamp too so any
-   content that was clipped on screen is captured in full. */
 .card.is-capturing {
   transform: none !important;
   box-shadow: none !important;
@@ -554,72 +792,122 @@ body {
   overflow: visible !important;
 }
 .card.is-capturing::after {
-  display: none;
+  background:
+    radial-gradient(130% 90% at 50% 50%,
+      transparent 50%,
+      oklch(0.55 0.05 45 / 0.18) 92%,
+      oklch(0.40 0.06 35 / 0.30) 100%),
+    repeating-linear-gradient(92deg,
+      transparent 0,
+      transparent 3px,
+      oklch(0.70 0.03 60 / 0.04) 3px,
+      oklch(0.70 0.03 60 / 0.04) 4px);
 }
 
-.card__seal {
-  width: 48px;
-  height: 48px;
-  border: 1px solid var(--ink);
+/* The aura halo behind the card. Position is set via JS sibling sizing. */
+.vellum-aura {
+  position: absolute;
   border-radius: 50%;
+  filter: blur(60px) saturate(1.05);
+  opacity: 0.78;
+  pointer-events: none;
+  z-index: 0;
+  animation: aura-drift-card 22s ease-in-out infinite alternate;
+}
+
+.carte-card-wrap {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 10px;
+  width: 100%;
+}
+
+@keyframes aura-drift-card {
+  0%   { transform: translate(0%, 0%) scale(1); opacity: 0.78; }
+  50%  { transform: translate(3%, 1.5%) scale(1.05); opacity: 0.86; }
+  100% { transform: translate(-2%, -1%) scale(0.97); opacity: 0.74; }
+}
+
+/* Card contents ------------------------------------------------------- */
+.card__seal {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 0 14px;
+  border-radius: 50%;
+  background: oklch(1 0 0 / 0.22);
+  border: 1px solid oklch(0.55 0.05 40 / 0.30);
+  box-shadow: inset 0 1px 0 oklch(1 0 0 / 0.4);
 }
 
 .card__seal-mark {
   display: block;
-  width: 30px;
+  width: 26px;
   height: auto;
+  opacity: 0.78;
 }
 
 .card__dedication {
-  font-size: 10px;
-  letter-spacing: 0.22em;
-  color: var(--ink);
-  margin-bottom: 8px;
+  font-family: var(--font-sans);
+  font-size: 9px;
+  letter-spacing: 0.42em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+  margin: 0 0 10px;
+}
+
+.card__dedication #card-dedicate-name {
+  color: var(--ink-deep);
+  letter-spacing: 0.5em;
 }
 
 .card__stars {
   display: block;
-  width: 44px;
+  width: 56px;
   height: auto;
-  margin: 4px 0 2px;
+  margin: 6px 0 4px;
+  opacity: 0.45;
+  filter: brightness(0.4) sepia(0.4);
   user-select: none;
 }
 
 .card__name {
-  font-family: var(--font-script);
-  font-size: 56px;
-  font-weight: 400;
-  line-height: 1;
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: 46px;
+  line-height: 0.98;
+  letter-spacing: -0.025em;
   color: var(--accent);
-  margin: 8px 0 4px;
-  letter-spacing: -0.02em;
+  margin: 14px 0 8px;
 }
 
 .card__tagline {
+  font-family: var(--font-sans);
   font-style: italic;
-  font-size: 12px;
-  line-height: 1.45;
-  color: var(--ink-soft);
-  max-width: 280px;
-  margin: 0 0 16px;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--ink-deep);
+  opacity: 0.85;
+  max-width: 300px;
+  margin: 0 auto 18px;
 }
 
-/* The pyramid panel — light-grey background, three columns, one note
-   per line. The columns are independent (their heights can differ when
-   one layer has more notes). */
+/* Pyramid: keep the 3-column structure of the existing markup; restyle
+   as a vellum-friendly band of notes. */
 .card__pyramid {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   gap: 10px;
   width: 100%;
-  background: rgba(26, 26, 26, 0.05);
   padding: 14px 12px;
-  margin: 0 0 16px;
+  margin: 0 0 14px;
   text-align: center;
+  background: transparent;
+  border-top: 1px solid oklch(0.55 0.04 40 / 0.22);
+  border-bottom: 1px solid oklch(0.55 0.04 40 / 0.22);
 }
 
 .card__layer {
@@ -631,90 +919,94 @@ body {
 }
 
 .card__layer-label {
-  font-size: 10px;
-  letter-spacing: 0.22em;
-  color: var(--muted);
-  font-weight: 500;
+  font-family: var(--font-sans);
+  font-size: 9.5px;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  font-weight: 400;
 }
 
 .card__layer-notes {
+  font-family: var(--font-sans);
   font-size: 10.5px;
-  line-height: 1.5;
-  color: var(--ink);
-  letter-spacing: 0.06em;
+  line-height: 1.55;
+  color: var(--ink-deep);
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   display: flex;
   flex-direction: column;
-  gap: 1px;
+  gap: 2px;
 }
 
-.card__layer-note {
-  display: block;
-}
+.card__layer-note { display: block; }
 
-/* Attribute pairs — 2x2 grid, label above value, generous gap. */
 .card__attrs {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 14px 28px;
   width: 100%;
-  margin-bottom: 12px;
+  margin: 4px 0 14px;
   text-align: left;
-  padding: 0 4px;
+  padding: 4px 4px 4px;
 }
 
 .card__attr dt {
-  font-size: 9.5px;
-  letter-spacing: 0.22em;
-  color: var(--muted);
-  font-weight: 500;
-  margin-bottom: 3px;
+  font-family: var(--font-sans);
+  font-size: 9px;
+  letter-spacing: 0.36em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+  font-weight: 400;
+  margin: 0 0 4px;
 }
 
 .card__attr dd {
+  font-family: var(--font-sans);
   font-style: italic;
-  font-size: 12.5px;
-  color: var(--ink);
+  font-size: 13px;
+  color: var(--ink-deep);
 }
 
 .card__edition {
+  font-family: var(--font-sans);
   font-style: italic;
-  font-size: 12px;
-  color: var(--ink);
-  margin-top: 4px;
+  font-size: 11.5px;
+  color: var(--ink-deep);
+  margin-top: 6px;
 }
 
 .card__cities {
-  font-size: 10px;
-  letter-spacing: 0.22em;
-  color: var(--ink);
-  margin: 4px 0 10px;
+  font-family: var(--font-sans);
+  font-size: 9px;
+  letter-spacing: 0.5em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+  margin: 6px 0 8px;
 }
 
 .card__footnote {
+  font-family: var(--font-sans);
   font-style: italic;
   font-size: 9.5px;
-  color: var(--muted);
   letter-spacing: 0.02em;
+  color: var(--ink-quiet);
+  opacity: 0.85;
 }
 
 /* ─── reveal choreography ────────────────────────────────────────────── */
-/* The carte screen's contents stagger in: bottle first, then card, then
-   header. Each piece lifts ever so slightly into place. This is the
-   emotional payoff after the ~30s wait — give it room. */
 @keyframes reveal-rise {
   from { opacity: 0; transform: translateY(8px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes reveal-rise-card {
-  from { opacity: 0; transform: translateY(12px) scale(0.985); }
+  from { opacity: 0; transform: translateY(18px) scale(0.985); }
   to   { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 .screen--carte.active .carte-header {
   animation: reveal-rise 520ms var(--ease) both;
-  animation-delay: 0ms;
 }
 
 .screen--carte.active .carte-bottle-col {
@@ -722,13 +1014,17 @@ body {
   animation-delay: 120ms;
 }
 
+/* `backwards` fill mode applies the FROM keyframe state during the delay
+   but reverts to the rule's transform after the animation ends — which is
+   essential here, because the rule's transform reads --rx/--ry from the
+   pointer-tilt handler. With `both`, the keyframe's TO transform would
+   permanently override the tilt and the card couldn't move on hover. */
 .screen--carte.active .card {
-  animation: reveal-rise-card 760ms var(--ease) both;
+  animation: reveal-rise-card 1100ms var(--ease) backwards;
   animation-delay: 240ms;
 }
 
 /* ─── accessibility ──────────────────────────────────────────────────── */
-/* Visible focus rings only for keyboard navigation (not mouse clicks). */
 .btn:focus-visible,
 .tag:focus-visible,
 .input:focus-visible,
@@ -737,9 +1033,6 @@ body {
   outline-offset: 3px;
 }
 
-/* Honor the user's preference to minimize motion. Keeps the structure
-   intact but collapses transitions/animations to near-instant, and
-   disables the card's 3D tilt entirely. */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -749,86 +1042,64 @@ body {
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
-  .card {
-    transform: none !important;
-  }
-  .card::after { display: none; }
+  .card { transform: none !important; }
+  .card::after { background: none; }
+  .ambient-aura, .vellum-aura, .anchoring-orb { animation: none; }
 }
 
-/* ─── toast / inline error ────────────────────────────────────────────── */
+/* ─── toast / inline error ───────────────────────────────────────────── */
 .toast {
   position: fixed;
   bottom: 32px;
   left: 50%;
   transform: translateX(-50%);
-  padding: 12px 20px;
+  padding: 12px 22px;
   background: var(--ink);
-  color: var(--paper);
-  font-size: 13px;
+  color: var(--ground-light);
+  font-family: var(--font-sans);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  border-radius: 6px;
   max-width: 480px;
   text-align: center;
   z-index: 100;
   opacity: 0;
   transition: opacity var(--t-med) var(--ease);
+  box-shadow: 0 12px 28px -10px oklch(0.30 0.06 30 / 0.45);
 }
 
-.toast:not([hidden]) {
-  opacity: 1;
-}
+.toast:not([hidden]) { opacity: 1; }
 
 /* ─── responsive ─────────────────────────────────────────────────────── */
 @media (max-width: 900px) {
-  .ms-monogram--large { width: 160px; }
-  .display { font-size: 24px; }
-  .display--lg { font-size: 30px; }
-  /* Below 900px the fixed two-column shape gives way to a scrollable
-     single-column stack — there is no longer enough horizontal room to
-     keep the bottle and card side by side. */
-  .screen--carte { overflow-y: auto; align-items: flex-start; }
+  .display--lg { font-size: 56px; }
+  .display { font-size: 40px; }
+  .carte-header .display { font-size: 32px; }
+
+  .composition-grid { grid-template-columns: 1fr; gap: 24px; }
+
+  .screen--carte { overflow-y: auto; align-items: flex-start; padding: 48px 24px; }
   .carte-layout {
     grid-template-columns: 1fr;
     column-gap: 0;
-    row-gap: 32px;
+    row-gap: 36px;
     justify-items: center;
     height: auto;
   }
-  .carte-left { height: auto; gap: 24px; }
+  .carte-left { height: auto; gap: 20px; }
   .card { max-height: none; padding: 36px 32px 28px; }
-  .card__name { font-size: 60px; }
-  .bottle-line--reveal { width: 180px; }
+  .card__name { font-size: 48px; }
 }
 
 @media (max-width: 520px) {
-  .screen { padding: 32px 16px; }
-  .stack { gap: 24px; }
-  .ms-monogram { width: 72px; }
-  .ms-monogram--large { width: 128px; }
-
-  /* Tag rows become a 2-column grid on mobile — keeps the layer compact
-     instead of becoming a single tall stack. */
-  .tag-group { width: 100%; }
-  .tag-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    width: 100%;
-    border-right: none;
-  }
-  .tag {
-    border-right: 1px solid var(--hairline);
-    border-bottom: 1px solid var(--hairline);
-    text-align: center;
-  }
-  /* Right column tags: no right border (they're at the edge of the row) */
-  .tag:nth-child(2n) { border-right: none; }
-  /* Last row(s): no bottom border. Handles both even and odd counts. */
-  .tag:nth-last-child(-n+2):nth-child(2n+1),
-  .tag:last-child { border-bottom: none; }
-
+  .screen { padding: 56px 20px; }
+  .stack { gap: 20px; }
+  .display--lg { font-size: 44px; }
+  .display { font-size: 32px; }
+  .ms-monogram--large { width: 44px; }
+  .form-confidence { gap: 12px; }
   .card { padding: 32px 24px 24px; }
-  .card__name { font-size: 56px; }
-  .card__pyramid {
-    padding: 18px 10px;
-    gap: 8px;
-  }
-  .card__attrs { gap: 18px 20px; }
+  .card__name { font-size: 44px; }
+  .card__pyramid { padding: 14px 8px; gap: 8px; }
+  .card__attrs { gap: 14px 16px; }
 }

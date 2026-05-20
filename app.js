@@ -58,6 +58,81 @@ const LOADING_LINES = [
 const SCREENS = ['landing', 'method', 'confidence', 'composition', 'anchoring', 'carte'];
 const METHOD_SEEN_KEY = 'maison-sillage:method-seen';
 
+// ─── aura family mapping ─────────────────────────────────────────────────
+// Olfactive family drives the colour of the ambient aura behind every screen,
+// the orb on the anchoring screen, and the halo behind the vellum card.
+//
+// Base accord sets the family definitively. Before a base is picked, the
+// heart hints at one so the room already starts to shift toward the
+// memory's temperature.
+const FAMILY_BY_BASE = {
+  wood:    'woody',
+  smoke:   'woody',
+  amber:   'oriental',
+  vanilla: 'gourmand',
+  musk:    'oriental'
+};
+
+const FAMILY_BY_HEART = {
+  floral:  'floral',
+  iris:    'floral',
+  rose:    'floral',
+  tea:     'oriental',
+  honey:   'gourmand',
+  tobacco: 'woody'
+};
+
+const FAMILY_BY_HEAD = {
+  citrus:   'citrus',
+  marine:   'marine',
+  green:    'woody',
+  aromatic: 'woody',
+  spice:    'oriental',
+  fruit:    'gourmand'
+};
+
+// Chip glow color per family (matches the aura cores in style.css).
+const FAMILY_GLOW = {
+  floral:   'oklch(0.78 0.16 18)',
+  oriental: 'oklch(0.62 0.16 32)',
+  marine:   'oklch(0.78 0.10 210)',
+  woody:    'oklch(0.70 0.12 70)',
+  citrus:   'oklch(0.86 0.14 95)',
+  gourmand: 'oklch(0.80 0.10 60)'
+};
+
+// Liquid colours per family — top/bottom of the bottle gradient. The
+// reveal bottle picks its top from the HEAD's family and its bottom from
+// the BASE's family, so the user's choices visibly mix in the glass.
+const FAMILY_LIQUID = {
+  floral:   { top: 'oklch(0.82 0.18 18)',  bot: 'oklch(0.58 0.18 6)'   },
+  oriental: { top: 'oklch(0.68 0.16 32)',  bot: 'oklch(0.38 0.14 18)'  },
+  marine:   { top: 'oklch(0.84 0.10 210)', bot: 'oklch(0.50 0.10 220)' },
+  woody:    { top: 'oklch(0.74 0.12 70)',  bot: 'oklch(0.44 0.10 50)'  },
+  citrus:   { top: 'oklch(0.88 0.14 95)',  bot: 'oklch(0.62 0.14 75)'  },
+  gourmand: { top: 'oklch(0.84 0.10 60)',  bot: 'oklch(0.54 0.09 35)'  }
+};
+
+const AURA_FAMILIES = ['floral', 'oriental', 'marine', 'woody', 'citrus', 'gourmand'];
+
+function currentFamily() {
+  if (state.base)  return FAMILY_BY_BASE[state.base]   || 'oriental';
+  if (state.heart) return FAMILY_BY_HEART[state.heart] || 'gourmand';
+  if (state.head)  return FAMILY_BY_HEAD[state.head]   || 'gourmand';
+  return 'gourmand';
+}
+
+function applyAuraFamily(family) {
+  const ambient = document.getElementById('ambient-aura');
+  const orb     = document.getElementById('anchoring-orb');
+  const halo    = document.getElementById('vellum-aura');
+  for (const el of [ambient, orb, halo]) {
+    if (!el) continue;
+    for (const f of AURA_FAMILIES) el.classList.remove('aura-' + f);
+    el.classList.add('aura-' + family);
+  }
+}
+
 // ─── state ──────────────────────────────────────────────────────────────
 const state = {
   screen: 'landing',
@@ -116,12 +191,26 @@ function renderTags() {
 
 function selectTag(layer, id) {
   state[layer] = id;
-  // Update aria-pressed for all tags in this row
+  // Update aria-pressed and the per-chip glow for all tags in this row
   $$(`.tag[data-layer="${layer}"]`).forEach(t => {
-    t.setAttribute('aria-pressed', t.dataset.id === id ? 'true' : 'false');
+    const selected = t.dataset.id === id;
+    t.setAttribute('aria-pressed', selected ? 'true' : 'false');
+    if (selected) {
+      // Base chips light up with their own family glow so the colour of
+      // the selection telegraphs the family it commits to. Head/heart use
+      // a warm default — they hint at family without setting it.
+      const glow = layer === 'base'
+        ? (FAMILY_GLOW[FAMILY_BY_BASE[id]] || 'oklch(0.7 0.15 30)')
+        : 'oklch(0.78 0.15 35)';
+      t.style.setProperty('--chip-glow', glow);
+    } else {
+      t.style.removeProperty('--chip-glow');
+    }
   });
   // Enable macerate when all three are selected
   $('#btn-macerate').disabled = !(state.head && state.heart && state.base);
+  // Tint the room toward the memory being composed.
+  applyAuraFamily(currentFamily());
 }
 
 // ─── method screen one-per-session ──────────────────────────────────────
@@ -220,11 +309,24 @@ function projectionLabel(p) {
 }
 
 function renderCarte(c) {
-  // Drive the AI palette through CSS vars + SVG gradient stops
+  // The card name picks up the AI's accent so each composition still
+  // carries its own ink.
   const root = document.documentElement;
   root.style.setProperty('--accent', c.design_tokens.palette.accent);
-  $('#liquid-grad-top').setAttribute('stop-color', c.design_tokens.palette.liquid_top);
-  $('#liquid-grad-bot').setAttribute('stop-color', c.design_tokens.palette.liquid_bottom);
+
+  // The bottle's liquid is the user's choices made visible: head family
+  // tints the top, base family tints the bottom. This ties the bottle to
+  // the same colour vocabulary as the chip glow and the aura halo. Falls
+  // back to the AI palette if a family is missing for any reason.
+  const headFam = FAMILY_BY_HEAD[state.head];
+  const baseFam = FAMILY_BY_BASE[state.base];
+  const topColor = (headFam && FAMILY_LIQUID[headFam]?.top) || c.design_tokens.palette.liquid_top;
+  const botColor = (baseFam && FAMILY_LIQUID[baseFam]?.bot) || c.design_tokens.palette.liquid_bottom;
+  $('#liquid-grad-top').setAttribute('stop-color', topColor);
+  $('#liquid-grad-bot').setAttribute('stop-color', botColor);
+
+  // Position the vellum halo to surround the card. Drifts via CSS keyframe.
+  positionVellumHalo();
 
   // Render the AI's chosen bottle silhouette
   setBottleShape($('#reveal-bottle'), c.design_tokens.bottle_shape);
@@ -338,6 +440,10 @@ async function handleMacerate(e) {
     stopLoadingRotation();
     stopShapeRotation();
     goTo('carte');
+    // Recompute after the screen layout settles + after the card-reveal
+    // animation finishes, so the halo stays glued at every visible state.
+    requestAnimationFrame(positionVellumHalo);
+    setTimeout(positionVellumHalo, 1400);
   } catch (err) {
     stopLoadingRotation();
     stopShapeRotation();
@@ -483,9 +589,32 @@ function handleReset() {
   state.composition = null;
   $('#input-brief').value = '';
   // Don't clear the name — the same client is composing again.
-  $$('.tag').forEach(t => t.setAttribute('aria-pressed', 'false'));
+  $$('.tag').forEach(t => {
+    t.setAttribute('aria-pressed', 'false');
+    t.style.removeProperty('--chip-glow');
+  });
   $('#btn-macerate').disabled = true;
+  applyAuraFamily(currentFamily());
   goTo('confidence');
+}
+
+// ─── vellum halo sizing ─────────────────────────────────────────────────
+// The aura behind the card is positioned/sized relative to the card so it
+// looks like a halo rather than a separate blob. Recomputed on resize and
+// after the card animates in.
+function positionVellumHalo() {
+  const card = $('#fragrance-card');
+  const halo = $('#vellum-aura');
+  const wrap = $('.carte-card-wrap');
+  if (!card || !halo || !wrap) return;
+  const cardR = card.getBoundingClientRect();
+  const wrapR = wrap.getBoundingClientRect();
+  const w = cardR.width + 240;
+  const h = cardR.height + 160;
+  halo.style.width  = `${w}px`;
+  halo.style.height = `${h}px`;
+  halo.style.left   = `${(cardR.left - wrapR.left) - 120}px`;
+  halo.style.top    = `${(cardR.top  - wrapR.top)  - 80}px`;
 }
 
 // ─── card hover tilt ────────────────────────────────────────────────────
@@ -547,6 +676,12 @@ function boot() {
   $('#form-composition').addEventListener('submit', handleMacerate);
 
   wireCardHover();
+
+  // Keep the vellum halo glued to the card across viewport changes.
+  window.addEventListener('resize', positionVellumHalo);
+
+  // Seed the ambient aura with the default family.
+  applyAuraFamily(currentFamily());
 
   // First screen
   goTo('landing');
