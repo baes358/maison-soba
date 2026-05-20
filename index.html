@@ -139,16 +139,22 @@
         <img src="media/ms-monogram.svg" alt="Maison Sillage" class="ms-monogram__mark">
       </div>
 
-      <!-- Bottle silhouette during loading. The shape defaults to monolith
-           (set in CSS / app.js); the AI's chosen shape lands on the reveal
-           screen, not here. No liquid is drawn while the composition is
-           still being macerated. -->
+      <!-- Bottle silhouette during loading. The shape cycles through all
+           six silhouettes (driven by app.js) while a ghost-ink liquid rises
+           and falls inside, giving the maceration a visible heartbeat. -->
       <svg
         class="bottle-line"
         id="anchoring-bottle"
         viewBox="0 0 120 200"
         xmlns="http://www.w3.org/2000/svg"
         aria-hidden="true">
+        <defs>
+          <clipPath id="anchoring-liquid-clip" data-bottle-clip></clipPath>
+        </defs>
+        <g clip-path="url(#anchoring-liquid-clip)">
+          <rect class="anchoring-liquid" x="0" y="172" width="120" height="0"
+                fill="currentColor" opacity="0.16"/>
+        </g>
         <g data-bottle-strokes
            fill="none" stroke="currentColor" stroke-width="1.2"
            stroke-linecap="round" stroke-linejoin="round"></g>
@@ -245,6 +251,6 @@
   <!-- Inline error banner — fades in over whatever screen is active. -->
   <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 
-  <script type="module" src="app.js?v=5"></script>
+  <script type="module" src="app.js?v=6"></script>
 </body>
 </html>

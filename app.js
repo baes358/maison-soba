@@ -8,7 +8,7 @@
 // Composition is fetched from the same-origin /api/generate function;
 // no API keys live in the browser.
 
-import { setBottleShape } from './bottles.js?v=2';
+import { BOTTLE_SHAPES, setBottleShape } from './bottles.js?v=3';
 
 // ─── tag labels (display-only; server validates against canonical set) ──
 // Mirror of /api/lib/tags.js minus the constraint strings.
@@ -161,6 +161,30 @@ function stopLoadingRotation() {
   loadingTimer = null;
 }
 
+// ─── anchoring bottle shape rotation ────────────────────────────────────
+// Cycles the silhouette through all six shapes while the maceration call
+// is in flight. The liquid-fill animation runs in CSS — this only swaps
+// the clipPath + strokes.
+let shapeRotateTimer = null;
+function startShapeRotation() {
+  const svg = $('#anchoring-bottle');
+  if (!svg) return;
+  // Shuffle so the order isn't predictable between sessions
+  const shapes = BOTTLE_SHAPES.slice().sort(() => Math.random() - 0.5);
+  let i = 0;
+  setBottleShape(svg, shapes[i]);
+  i++;
+  clearInterval(shapeRotateTimer);
+  shapeRotateTimer = setInterval(() => {
+    setBottleShape(svg, shapes[i % shapes.length]);
+    i++;
+  }, 1800);
+}
+function stopShapeRotation() {
+  clearInterval(shapeRotateTimer);
+  shapeRotateTimer = null;
+}
+
 // ─── carte rendering ────────────────────────────────────────────────────
 
 // Material display names on the card. When a material has a parenthetical
@@ -305,15 +329,18 @@ async function handleMacerate(e) {
 
   goTo('anchoring');
   startLoadingRotation();
+  startShapeRotation();
 
   try {
     const composition = await generate();
     state.composition = composition;
     renderCarte(composition);
     stopLoadingRotation();
+    stopShapeRotation();
     goTo('carte');
   } catch (err) {
     stopLoadingRotation();
+    stopShapeRotation();
     console.error('[generate]', err);
     showToast(err.message || 'The composition could not be drawn. Please try again.', 6500);
     // Send the user back to the composition screen so they can retry.
@@ -348,10 +375,9 @@ function handleReset() {
 function boot() {
   renderTags();
 
-  // Draw the loading-screen bottle once at boot. Monolith is the default
-  // silhouette during anchoring — we don't yet know what shape the AI
-  // will pick. The shape on the reveal screen gets set when the composition
-  // returns.
+  // Seed the loading-screen bottle with the first silhouette. While
+  // anchoring is active, shapeRotateTimer cycles it through the full set;
+  // the reveal screen's bottle is set when the composition returns.
   setBottleShape($('#anchoring-bottle'), 'monolith');
 
   // Wire actions

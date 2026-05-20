@@ -273,7 +273,8 @@ body {
   border: none;
   margin: 0;
   padding: 0;
-  width: 100%;
+  width: fit-content;
+  max-width: 100%;
 }
 
 .tag-group__legend {
@@ -281,7 +282,8 @@ body {
   flex-direction: column;
   gap: 2px;
   margin-bottom: 12px;
-  text-align: left;
+  text-align: center;
+  align-items: center;
 }
 
 .tag-group__title {
@@ -373,6 +375,18 @@ body {
   width: 160px;
 }
 
+/* Liquid fill that loops while the AI is composing. Animating y/height
+   via CSS (supported in all modern browsers) keeps the rise/fall smooth
+   without SMIL. The clipPath does the silhouette-trimming. */
+.anchoring-liquid {
+  animation: liquid-fill 2.4s ease-in-out infinite;
+}
+
+@keyframes liquid-fill {
+  0%, 100% { y: 172px; height: 0px; }
+  50%      { y: 44px;  height: 128px; }
+}
+
 .loading-line {
   font-family: var(--font-sans);
   font-size: 18px;
@@ -383,18 +397,29 @@ body {
 }
 
 /* ─── la carte: layout shell ─────────────────────────────────────────── */
+/* The carte is the tallest screen — the card alone often exceeds the
+   viewport. Align to the top (not center) so the header and bottle
+   never get clipped behind the screen's padding edge. */
+.screen--carte {
+  align-items: flex-start;
+}
+
 .carte-layout {
   display: grid;
   grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto 1fr;
   column-gap: 80px;
-  row-gap: 32px;
+  row-gap: 24px;
   align-items: start;
   width: 100%;
   max-width: 1100px;
 }
 
+/* Header sits above the bottle (left column). The card on the right
+   spans both rows so the layout stays balanced. */
 .carte-header {
-  grid-column: 1 / -1;
+  grid-column: 1;
+  grid-row: 1;
   text-align: center;
   margin-bottom: 8px;
 }
@@ -412,12 +437,19 @@ body {
 }
 
 .carte-bottle-col {
+  grid-column: 1;
+  grid-row: 2;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   gap: 36px;
-  padding-top: 24px;
+  padding-top: 8px;
+}
+
+.card {
+  grid-column: 2;
+  grid-row: 1 / span 2;
 }
 
 .bottle-line--reveal {
@@ -662,12 +694,15 @@ body {
   .display--lg { font-size: 30px; }
   .carte-layout {
     grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto;
     column-gap: 0;
     row-gap: 32px;
     justify-items: center;
   }
-  .carte-bottle-col { padding-top: 0; }
-  .card { justify-self: center; padding: 36px 32px 28px; }
+  /* Collapse to a single stacked column: header → bottle → card. */
+  .carte-header   { grid-column: 1; grid-row: 1; }
+  .carte-bottle-col { grid-column: 1; grid-row: 2; padding-top: 0; }
+  .card { grid-column: 1; grid-row: 3; justify-self: center; padding: 36px 32px 28px; }
   .card__name { font-size: 60px; }
   .bottle-line--reveal { width: 180px; }
 }
@@ -680,6 +715,7 @@ body {
 
   /* Tag rows become a 2-column grid on mobile — keeps the layer compact
      instead of becoming a single tall stack. */
+  .tag-group { width: 100%; }
   .tag-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
