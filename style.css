@@ -1259,4 +1259,29 @@ body {
   .card__name { font-size: 50px; }
   .card__pyramid { padding: 14px 8px; gap: 8px; }
   .card__attrs { gap: 14px 16px; }
+
+  /* Monogram is reserved for landing (full wordmark) and the anchoring
+     loading screen on mobile; the in-card seal stays because it's a
+     different element (.card__seal). Hidden everywhere else to free up
+     vertical room. */
+  .screen--method .ms-monogram,
+  .screen--confidence .ms-monogram,
+  .screen--composition .ms-monogram,
+  .carte-left .ms-monogram { display: none; }
+
+  /* Composition: compact aggressively so head/heart/base + macerate all
+     fit in one mobile viewport without scrolling. */
+  .screen--composition { padding: 44px 16px 16px; }
+  .screen--composition .stack { gap: 10px; }
+  .screen--composition .display { font-size: 26px; }
+  .screen--composition .body { font-size: 13px; }
+  .screen--composition .screen-back { top: 16px; left: 16px; padding: 6px 8px; }
+  .composition-grid { gap: 10px; }
+  .tag-group__legend { margin: 0 0 6px; gap: 2px; }
+  .tag-group__title { font-size: 10px; letter-spacing: 0.26em; }
+  .tag-group__sub { font-size: 11px; }
+  .tag-row { padding: 10px 10px; gap: 6px; }
+  .tag { height: 28px; padding: 0 10px; font-size: 10px; letter-spacing: 0.18em; gap: 7px; }
+  .tag::before { width: 4px; height: 4px; }
+  #btn-macerate { height: 40px; font-size: 11px; padding: 0 22px; }
 }
