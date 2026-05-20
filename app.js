@@ -101,16 +101,25 @@ const FAMILY_GLOW = {
   gourmand: 'oklch(0.80 0.10 60)'
 };
 
-// Liquid colours per family — top/bottom of the bottle gradient. The
-// reveal bottle picks its top from the HEAD's family and its bottom from
-// the BASE's family, so the user's choices visibly mix in the glass.
+// Liquid colours per family — top/mid/bottom of the bottle gradient.
+// Tuned to look like actual perfume in glass: low chroma, warm amber
+// territory for most families, with subtle hue shifts to distinguish
+// each. The reveal bottle uses HEAD's top, HEART's mid, and BASE's bot,
+// so all three of the user's chip selections mix into a single blended
+// composition visible through the glass.
 const FAMILY_LIQUID = {
-  floral:   { top: 'oklch(0.82 0.18 18)',  bot: 'oklch(0.58 0.18 6)'   },
-  oriental: { top: 'oklch(0.68 0.16 32)',  bot: 'oklch(0.38 0.14 18)'  },
-  marine:   { top: 'oklch(0.84 0.10 210)', bot: 'oklch(0.50 0.10 220)' },
-  woody:    { top: 'oklch(0.74 0.12 70)',  bot: 'oklch(0.44 0.10 50)'  },
-  citrus:   { top: 'oklch(0.88 0.14 95)',  bot: 'oklch(0.62 0.14 75)'  },
-  gourmand: { top: 'oklch(0.84 0.10 60)',  bot: 'oklch(0.54 0.09 35)'  }
+  // Pale rose-amber → deeper rose-cognac, like a rosewater eau
+  floral:   { top: 'oklch(0.90 0.04 25)',   mid: 'oklch(0.74 0.07 20)',   bot: 'oklch(0.52 0.08 18)'   },
+  // Classic perfume amber → cognac
+  oriental: { top: 'oklch(0.82 0.07 70)',   mid: 'oklch(0.60 0.09 50)',   bot: 'oklch(0.36 0.07 38)'   },
+  // Near-clear with a faint blue-grey wash (most marines are nearly water)
+  marine:   { top: 'oklch(0.95 0.015 220)', mid: 'oklch(0.86 0.025 215)', bot: 'oklch(0.74 0.035 210)' },
+  // Warm amber → dark mahogany
+  woody:    { top: 'oklch(0.80 0.06 75)',   mid: 'oklch(0.58 0.08 55)',   bot: 'oklch(0.34 0.07 40)'   },
+  // Pale champagne → gold
+  citrus:   { top: 'oklch(0.93 0.05 95)',   mid: 'oklch(0.82 0.07 88)',   bot: 'oklch(0.68 0.08 78)'   },
+  // Honey → deep amber
+  gourmand: { top: 'oklch(0.86 0.06 80)',   mid: 'oklch(0.66 0.09 60)',   bot: 'oklch(0.46 0.08 45)'   }
 };
 
 const AURA_FAMILIES = ['floral', 'oriental', 'marine', 'woody', 'citrus', 'gourmand'];
@@ -122,26 +131,47 @@ function currentFamily() {
   return 'gourmand';
 }
 
-function applyAuraFamily(family) {
-  // The ambient aura and vellum halo each render a single tinted radial
-  // — toggling the .aura-* class is the right way to retint them.
+// Reflect the current head/heart/base selections in every aura layer.
+//
+// The ambient aura paints three independent radial spots — one per
+// section — so the colour of a chosen chip stays in the room even when
+// chips in other sections change. The anchoring orb and the vellum
+// halo still use the dominant family (base > heart > head) since each
+// is a single unified composition.
+function applyAuras() {
   const ambient = document.getElementById('ambient-aura');
+  const orb     = document.getElementById('anchoring-orb');
   const halo    = document.getElementById('vellum-aura');
-  for (const el of [ambient, halo]) {
-    if (!el) continue;
-    for (const f of AURA_FAMILIES) el.classList.remove('aura-' + f);
-    el.classList.add('aura-' + family);
+
+  const headFam  = state.head  ? (FAMILY_BY_HEAD[state.head]   || 'gourmand') : null;
+  const heartFam = state.heart ? (FAMILY_BY_HEART[state.heart] || 'gourmand') : null;
+  const baseFam  = state.base  ? (FAMILY_BY_BASE[state.base]   || 'oriental') : null;
+
+  if (ambient) {
+    // Each section's colour is independent. Falling back to 'transparent'
+    // means an un-selected section contributes nothing to the wash.
+    ambient.style.setProperty('--aura-head',  headFam  ? `var(--aura-${headFam}-a)`  : 'transparent');
+    ambient.style.setProperty('--aura-heart', heartFam ? `var(--aura-${heartFam}-a)` : 'transparent');
+    ambient.style.setProperty('--aura-base',  baseFam  ? `var(--aura-${baseFam}-b)`  : 'transparent');
   }
-  // The anchoring orb paints multiple drifting spots, so it consumes the
-  // family colours through CSS variables rather than a single-radial
-  // class. Setting --orb-core-a/b lets the .anchoring-orb rule compose a
-  // diffuse, viewport-spanning wash instead of one bright centered orb.
-  const orb = document.getElementById('anchoring-orb');
+
+  const dominant = baseFam || heartFam || headFam || 'gourmand';
+
   if (orb) {
-    orb.style.setProperty('--orb-core-a', `var(--aura-${family}-a)`);
-    orb.style.setProperty('--orb-core-b', `var(--aura-${family}-b)`);
+    orb.style.setProperty('--orb-core-a', `var(--aura-${dominant}-a)`);
+    orb.style.setProperty('--orb-core-b', `var(--aura-${dominant}-b)`);
+  }
+
+  if (halo) {
+    for (const f of AURA_FAMILIES) halo.classList.remove('aura-' + f);
+    halo.classList.add('aura-' + dominant);
   }
 }
+
+// Back-compat alias — earlier code called applyAuraFamily(...) with a
+// single family. Now that the ambient aura is composed from all three
+// sections, we just re-read state.
+function applyAuraFamily() { applyAuras(); }
 
 // ─── state ──────────────────────────────────────────────────────────────
 const state = {
@@ -220,7 +250,7 @@ function selectTag(layer, id) {
   // Enable macerate when all three are selected
   $('#btn-macerate').disabled = !(state.head && state.heart && state.base);
   // Tint the room toward the memory being composed.
-  applyAuraFamily(currentFamily());
+  applyAuras();
 }
 
 // ─── method screen one-per-session ──────────────────────────────────────
@@ -325,14 +355,18 @@ function renderCarte(c) {
   root.style.setProperty('--accent', c.design_tokens.palette.accent);
 
   // The bottle's liquid is the user's choices made visible: head family
-  // tints the top, base family tints the bottom. This ties the bottle to
-  // the same colour vocabulary as the chip glow and the aura halo. Falls
-  // back to the AI palette if a family is missing for any reason.
-  const headFam = FAMILY_BY_HEAD[state.head];
-  const baseFam = FAMILY_BY_BASE[state.base];
-  const topColor = (headFam && FAMILY_LIQUID[headFam]?.top) || c.design_tokens.palette.liquid_top;
-  const botColor = (baseFam && FAMILY_LIQUID[baseFam]?.bot) || c.design_tokens.palette.liquid_bottom;
+  // tints the top, heart family tints the middle, base family tints the
+  // bottom. SVG interpolates between the three stops so all three
+  // selections read as a single smoothly blended composition. AI palette
+  // is the fallback per stop if a family can't be resolved.
+  const headFam  = FAMILY_BY_HEAD[state.head];
+  const heartFam = FAMILY_BY_HEART[state.heart];
+  const baseFam  = FAMILY_BY_BASE[state.base];
+  const topColor = (headFam  && FAMILY_LIQUID[headFam]?.top)  || c.design_tokens.palette.liquid_top;
+  const midColor = (heartFam && FAMILY_LIQUID[heartFam]?.mid) || c.design_tokens.palette.liquid_top;
+  const botColor = (baseFam  && FAMILY_LIQUID[baseFam]?.bot)  || c.design_tokens.palette.liquid_bottom;
   $('#liquid-grad-top').setAttribute('stop-color', topColor);
+  $('#liquid-grad-mid').setAttribute('stop-color', midColor);
   $('#liquid-grad-bot').setAttribute('stop-color', botColor);
 
   // Position the vellum halo to surround the card. Drifts via CSS keyframe.
@@ -604,7 +638,7 @@ function handleReset() {
     t.style.removeProperty('--chip-glow');
   });
   $('#btn-macerate').disabled = true;
-  applyAuraFamily(currentFamily());
+  applyAuras();
   goTo('confidence');
 }
 
@@ -691,7 +725,7 @@ function boot() {
   window.addEventListener('resize', positionVellumHalo);
 
   // Seed the ambient aura with the default family.
-  applyAuraFamily(currentFamily());
+  applyAuras();
 
   // First screen
   goTo('landing');

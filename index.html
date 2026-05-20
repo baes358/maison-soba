@@ -14,16 +14,19 @@
 
 <div class="app">
 
-  <!-- Atmosphere — persistent ground, ambient aura, paper grain. -->
+  <!-- Atmosphere — persistent ground, ambient aura, paper grain. The
+       ambient aura now paints three independent spots (head/heart/base);
+       each section's colour is driven by its own CSS variable so a
+       selection in one section stays visible while the others remain. -->
   <div class="atmosphere"></div>
-  <div class="ambient-aura aura-gourmand" id="ambient-aura"></div>
+  <div class="ambient-aura" id="ambient-aura"></div>
   <div class="paper-grain"></div>
 
   <!-- ─────────────────────────────── LANDING ─────────────────────────────── -->
   <section class="screen screen--landing active" data-screen="landing">
     <div class="stack stack--center">
-      <div class="ms-monogram ms-monogram--large" aria-label="Maison Sillage">
-        <img src="media/ms-monogram.svg" alt="Maison Sillage" class="ms-monogram__mark">
+      <div class="ms-monogram ms-monogram--home" aria-label="Maison Sillage">
+        <img src="media/maison-soba.svg" alt="Maison Sillage" class="ms-monogram__mark">
       </div>
       <h1 class="display display--lg">compose to linger.</h1>
       <p class="body body--lead">
@@ -210,6 +213,7 @@
             <defs>
               <linearGradient id="liquid-grad" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="0%"   id="liquid-grad-top" stop-color="#d8a26b"/>
+                <stop offset="50%"  id="liquid-grad-mid" stop-color="#c46a4f"/>
                 <stop offset="100%" id="liquid-grad-bot" stop-color="#7a2a3a"/>
               </linearGradient>
               <!-- A soft white band used for the hover shine sweep. The
