@@ -158,6 +158,12 @@ function applyAuras() {
   const dominant = baseFam || heartFam || headFam || 'gourmand';
 
   if (orb) {
+    // Each section paints one of the three orb spots; the orb itself
+    // rotates so they swirl. Kept --orb-core-a/b set to the dominant
+    // family as a defensive fallback for the older selectors.
+    orb.style.setProperty('--orb-head',   headFam  ? `var(--aura-${headFam}-a)`  : 'transparent');
+    orb.style.setProperty('--orb-heart',  heartFam ? `var(--aura-${heartFam}-a)` : 'transparent');
+    orb.style.setProperty('--orb-base',   baseFam  ? `var(--aura-${baseFam}-b)`  : 'transparent');
     orb.style.setProperty('--orb-core-a', `var(--aura-${dominant}-a)`);
     orb.style.setProperty('--orb-core-b', `var(--aura-${dominant}-b)`);
   }
@@ -350,9 +356,16 @@ function projectionLabel(p) {
 
 function renderCarte(c) {
   // The card name picks up the AI's accent so each composition still
-  // carries its own ink.
+  // carries its own ink — but if the user picked a heart, the card
+  // title uses the heart family's deep colour instead, so the signature
+  // reads as the soul of the composition.
   const root = document.documentElement;
   root.style.setProperty('--accent', c.design_tokens.palette.accent);
+  const heartFam = FAMILY_BY_HEART[state.heart];
+  root.style.setProperty(
+    '--card-name-color',
+    heartFam ? `var(--aura-${heartFam}-b)` : c.design_tokens.palette.accent
+  );
 
   // The bottle's liquid is the user's choices made visible: head family
   // tints the top, heart family tints the middle, base family tints the

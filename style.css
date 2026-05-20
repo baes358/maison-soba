@@ -668,17 +668,10 @@ body {
   min-height: 1.6em;
 }
 
-/* Dreamy family-tinted aura behind the anchoring stack.
-
-   The composition is a viewport-spanning sheet with four soft radial
-   "spots" placed at the corners-ish. Each spot is large but heavily
-   feathered (transparent by ~70%) and the whole sheet is blurred — so
-   colour spreads across the background rather than concentrating in a
-   single bright center.
-
-   --orb-core-a / --orb-core-b are set by JS from the current family
-   (e.g. var(--aura-floral-a), var(--aura-floral-b)). The fallback chain
-   resolves to the gourmand pair if vars aren't set yet. */
+/* Loading screen aura — three spots, one per section selection
+   (head/heart/base), the same colour vocabulary the user chose on
+   step 2. The orb rotates a full 360° over its drift loop so the
+   three colours swirl around the bottle while the AI composes. */
 .anchoring-orb {
   position: absolute;
   inset: -8%;
@@ -687,64 +680,46 @@ body {
   margin: 0;
   pointer-events: none;
   border-radius: 0;
-  /* Heavier blur + de-saturated filter washes the colour out so the
-     gradient reads as atmosphere rather than pigment. */
-  filter: blur(130px) saturate(0.7);
-  opacity: 0.42;
+  filter: blur(130px) saturate(0.78);
+  opacity: 0.5;
   z-index: 0;
   background:
-    radial-gradient(34% 30% at 18% 24%, var(--orb-core-a, var(--aura-gourmand-a)) 0%, transparent 70%),
-    radial-gradient(30% 28% at 78% 28%, var(--orb-core-b, var(--aura-gourmand-b)) 0%, transparent 75%),
-    radial-gradient(38% 34% at 32% 78%, var(--orb-core-b, var(--aura-gourmand-b)) 0%, transparent 70%),
-    radial-gradient(32% 30% at 82% 76%, var(--orb-core-a, var(--aura-gourmand-a)) 0%, transparent 75%);
-  animation: anchoring-orb-drift 14s ease-in-out infinite;
+    radial-gradient(36% 32% at 25% 28%, var(--orb-head,  var(--aura-gourmand-a)) 0%, transparent 70%),
+    radial-gradient(36% 32% at 75% 28%, var(--orb-heart, var(--aura-gourmand-a)) 0%, transparent 70%),
+    radial-gradient(44% 38% at 50% 78%, var(--orb-base,  var(--aura-gourmand-b)) 0%, transparent 68%);
+  animation: anchoring-orb-drift 16s linear infinite;
   will-change: transform, opacity;
 }
 
-/* A second, smaller wash drifts on its own timing so the two motions
-   never align — adds a floaty, layered quality. */
+/* Inner wash rotates the opposite direction so the two layers swirl
+   against each other — gives the room a slow vortex feel. */
 .anchoring-orb::after {
   content: '';
   position: absolute;
   inset: 6%;
   background:
-    radial-gradient(26% 22% at 60% 16%, var(--orb-core-a, var(--aura-gourmand-a)) 0%, transparent 78%),
-    radial-gradient(24% 20% at 16% 58%, var(--orb-core-b, var(--aura-gourmand-b)) 0%, transparent 80%),
-    radial-gradient(28% 24% at 70% 82%, var(--orb-core-b, var(--aura-gourmand-b)) 0%, transparent 78%);
-  filter: blur(50px) saturate(0.7);
-  opacity: 0.55;
-  animation: anchoring-orb-inner 11s ease-in-out infinite alternate;
+    radial-gradient(28% 24% at 50% 18%, var(--orb-head,  var(--aura-gourmand-a)) 0%, transparent 78%),
+    radial-gradient(26% 22% at 18% 62%, var(--orb-heart, var(--aura-gourmand-a)) 0%, transparent 80%),
+    radial-gradient(30% 26% at 78% 70%, var(--orb-base,  var(--aura-gourmand-b)) 0%, transparent 78%);
+  filter: blur(50px) saturate(0.78);
+  opacity: 0.6;
+  animation: anchoring-orb-inner 12s linear infinite;
 }
 
-/* The drift now ranges further across the viewport so each spot floats
-   visibly across the background rather than nudging in place. */
 @keyframes anchoring-orb-drift {
-  0%   { transform: translate(-6%,  -3%) scale(1.00); opacity: 0.36; }
-  25%  { transform: translate( 7%,  -6%) scale(1.08); opacity: 0.50; }
-  50%  { transform: translate( 8%,   5%) scale(0.96); opacity: 0.44; }
-  75%  { transform: translate(-6%,   6%) scale(1.06); opacity: 0.52; }
-  100% { transform: translate(-6%,  -3%) scale(1.00); opacity: 0.36; }
+  0%   { transform: translate(-3%, -2%) rotate(0deg)   scale(1.00); opacity: 0.42; }
+  25%  { transform: translate( 4%, -5%) rotate(90deg)  scale(1.06); opacity: 0.55; }
+  50%  { transform: translate( 5%,  4%) rotate(180deg) scale(0.96); opacity: 0.48; }
+  75%  { transform: translate(-4%,  5%) rotate(270deg) scale(1.04); opacity: 0.58; }
+  100% { transform: translate(-3%, -2%) rotate(360deg) scale(1.00); opacity: 0.42; }
 }
 
 @keyframes anchoring-orb-inner {
-  0%   { transform: translate(-8%,  5%) scale(1.00); opacity: 0.38; }
-  100% { transform: translate( 9%, -7%) scale(0.92); opacity: 0.70; }
-}
-
-/* If a family class lands on this element it would otherwise outweigh
-   .anchoring-orb and overwrite the multi-spot background — keep the
-   same diffuse composition in that scenario too. */
-.anchoring-orb.aura-floral,
-.anchoring-orb.aura-oriental,
-.anchoring-orb.aura-marine,
-.anchoring-orb.aura-woody,
-.anchoring-orb.aura-citrus,
-.anchoring-orb.aura-gourmand {
-  background:
-    radial-gradient(34% 30% at 18% 24%, var(--orb-core-a, var(--aura-gourmand-a)) 0%, transparent 70%),
-    radial-gradient(30% 28% at 78% 28%, var(--orb-core-b, var(--aura-gourmand-b)) 0%, transparent 75%),
-    radial-gradient(38% 34% at 32% 78%, var(--orb-core-b, var(--aura-gourmand-b)) 0%, transparent 70%),
-    radial-gradient(32% 30% at 82% 76%, var(--orb-core-a, var(--aura-gourmand-a)) 0%, transparent 75%);
+  0%   { transform: translate(-5%,  3%) rotate(0deg)    scale(1.00); opacity: 0.45; }
+  25%  { transform: translate( 6%, -5%) rotate(-90deg)  scale(0.95); opacity: 0.65; }
+  50%  { transform: translate( 4%,  6%) rotate(-180deg) scale(1.05); opacity: 0.55; }
+  75%  { transform: translate(-6%, -4%) rotate(-270deg) scale(0.94); opacity: 0.70; }
+  100% { transform: translate(-5%,  3%) rotate(-360deg) scale(1.00); opacity: 0.45; }
 }
 
 /* Keep the bottle/text/monogram above the orb. */
@@ -1002,13 +977,15 @@ body {
 
 .card__name {
   /* The card title is the one place we depart from Switzer — Maison
-     Sezanne carries the signature feel of the perfume name. */
+     Sezanne carries the signature feel of the perfume name. Colour is
+     driven by --card-name-color (set from the heart's family in JS)
+     so the signature reads as the soul of the composition. */
   font-family: 'Maison Sezanne', 'Snell Roundhand', 'EB Garamond', Georgia, serif;
   font-weight: 400;
   font-size: 64px;
   line-height: 1;
   letter-spacing: -0.015em;
-  color: var(--accent);
+  color: var(--card-name-color, var(--accent));
   margin: 14px 0 8px;
 }
 
