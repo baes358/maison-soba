@@ -170,38 +170,43 @@
        visual treatment. -->
   <section class="screen screen--carte" data-screen="carte">
     <div class="carte-layout">
-      <header class="carte-header">
-        <h2 class="display">III. La carte</h2>
-        <p class="body">The card composed for you.</p>
-      </header>
+      <!-- Left column: header, bottle, and the two actions. Centered as
+           a single flex column so its content stays vertically aligned to
+           the card on the right. -->
+      <div class="carte-left">
+        <header class="carte-header">
+          <h2 class="display">III. La carte</h2>
+          <p class="body">The card composed for you.</p>
+        </header>
 
-      <div class="carte-bottle-col">
-        <!-- Final bottle. The body shape (clipPath + strokes) is set by
-             app.js based on composition.design_tokens.bottle_shape. The
-             liquid gradient stops are set from the AI palette. -->
-        <svg
-          class="bottle-line bottle-line--reveal"
-          viewBox="0 0 120 200"
-          xmlns="http://www.w3.org/2000/svg"
-          aria-hidden="true"
-          id="reveal-bottle">
-          <defs>
-            <linearGradient id="liquid-grad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%"   id="liquid-grad-top" stop-color="#d8a26b"/>
-              <stop offset="100%" id="liquid-grad-bot" stop-color="#7a2a3a"/>
-            </linearGradient>
-            <clipPath id="liquid-clip" data-bottle-clip></clipPath>
-          </defs>
-          <g clip-path="url(#liquid-clip)">
-            <rect id="reveal-liquid" x="0" y="100" width="120" height="72" fill="url(#liquid-grad)"/>
-          </g>
-          <g data-bottle-strokes
-             fill="none" stroke="currentColor" stroke-width="1.2"
-             stroke-linecap="round" stroke-linejoin="round"></g>
-        </svg>
+        <div class="carte-bottle-col">
+          <!-- Final bottle. The body shape (clipPath + strokes) is set by
+               app.js based on composition.design_tokens.bottle_shape. The
+               liquid gradient stops are set from the AI palette. -->
+          <svg
+            class="bottle-line bottle-line--reveal"
+            viewBox="0 0 120 200"
+            xmlns="http://www.w3.org/2000/svg"
+            aria-hidden="true"
+            id="reveal-bottle">
+            <defs>
+              <linearGradient id="liquid-grad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%"   id="liquid-grad-top" stop-color="#d8a26b"/>
+                <stop offset="100%" id="liquid-grad-bot" stop-color="#7a2a3a"/>
+              </linearGradient>
+              <clipPath id="liquid-clip" data-bottle-clip></clipPath>
+            </defs>
+            <g clip-path="url(#liquid-clip)">
+              <rect id="reveal-liquid" x="0" y="100" width="120" height="72" fill="url(#liquid-grad)"/>
+            </g>
+            <g data-bottle-strokes
+               fill="none" stroke="currentColor" stroke-width="1.2"
+               stroke-linecap="round" stroke-linejoin="round"></g>
+          </svg>
 
-        <button class="btn btn--small" data-action="archive">archive</button>
-        <a class="link link--quiet" href="#" data-action="reset">new composition →</a>
+          <button class="btn btn--small" data-action="archive">archive</button>
+          <a class="link link--quiet" href="#" data-action="reset">new composition →</a>
+        </div>
       </div>
 
       <article class="card" id="fragrance-card">

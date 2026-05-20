@@ -397,31 +397,37 @@ body {
 }
 
 /* ─── la carte: layout shell ─────────────────────────────────────────── */
-/* The carte is the tallest screen — the card alone often exceeds the
-   viewport. Align to the top (not center) so the header and bottle
-   never get clipped behind the screen's padding edge. */
+/* The carte is a fixed, non-scrolling screen: two columns that share the
+   viewport height. The card on the right caps at the viewport so it
+   never spills off-screen; the left column centers its own contents. */
 .screen--carte {
-  align-items: flex-start;
+  overflow: hidden;
+  padding: 32px 24px;
 }
 
 .carte-layout {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  grid-template-rows: auto 1fr;
-  column-gap: 80px;
-  row-gap: 24px;
-  align-items: start;
+  column-gap: 64px;
+  align-items: center;
+  justify-items: center;
   width: 100%;
   max-width: 1100px;
+  height: 100%;
 }
 
-/* Header sits above the bottle (left column). The card on the right
-   spans both rows so the layout stays balanced. */
-.carte-header {
-  grid-column: 1;
-  grid-row: 1;
+.carte-left {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
   text-align: center;
-  margin-bottom: 8px;
+  height: 100%;
+}
+
+.carte-header {
+  text-align: center;
 }
 
 .carte-header .display {
@@ -437,91 +443,86 @@ body {
 }
 
 .carte-bottle-col {
-  grid-column: 1;
-  grid-row: 2;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
-  gap: 36px;
-  padding-top: 8px;
-}
-
-.card {
-  grid-column: 2;
-  grid-row: 1 / span 2;
+  gap: 24px;
 }
 
 .bottle-line--reveal {
-  width: 220px;
+  width: 180px;
   height: auto;
 }
 
 /* ─── la carte: the card itself ──────────────────────────────────────── */
+/* The card is sized to fit the viewport — its max-height is bounded by
+   the screen's vertical space minus padding, so the whole composition
+   stays visible without scrolling. */
 .card {
   width: 100%;
-  max-width: 440px;
-  justify-self: start;
+  max-width: 400px;
+  max-height: calc(100vh - 64px);
   background: var(--paper-card);
   border: 1px solid var(--ink);
-  padding: 44px 48px 32px;
+  padding: 28px 36px 22px;
   box-shadow: var(--shadow-card);
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  font-size: 13px;
+  font-size: 12px;
+  overflow: hidden;
 }
 
 .card__seal {
-  width: 62px;
-  height: 62px;
+  width: 48px;
+  height: 48px;
   border: 1px solid var(--ink);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 18px;
+  margin-bottom: 10px;
 }
 
 .card__seal-mark {
   display: block;
-  width: 38px;
+  width: 30px;
   height: auto;
 }
 
 .card__dedication {
-  font-size: 11px;
+  font-size: 10px;
   letter-spacing: 0.22em;
   color: var(--ink);
-  margin-bottom: 14px;
+  margin-bottom: 8px;
 }
 
 .card__stars {
   display: block;
-  width: 56px;
+  width: 44px;
   height: auto;
-  margin: 8px 0 2px;
+  margin: 4px 0 2px;
   user-select: none;
 }
 
 .card__name {
   font-family: var(--font-script);
-  font-size: 76px;
+  font-size: 56px;
   font-weight: 400;
   line-height: 1;
   color: var(--accent);
-  margin: 18px 0 8px;
+  margin: 8px 0 4px;
   letter-spacing: -0.02em;
 }
 
 .card__tagline {
   font-style: italic;
-  font-size: 12.5px;
-  line-height: 1.5;
+  font-size: 12px;
+  line-height: 1.45;
   color: var(--ink-soft);
   max-width: 280px;
-  margin: 0 0 28px;
+  margin: 0 0 16px;
 }
 
 /* The pyramid panel — light-grey background, three columns, one note
@@ -530,11 +531,11 @@ body {
 .card__pyramid {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
-  gap: 14px;
+  gap: 10px;
   width: 100%;
   background: rgba(26, 26, 26, 0.05);
-  padding: 22px 14px;
-  margin: 0 0 28px;
+  padding: 14px 12px;
+  margin: 0 0 16px;
   text-align: center;
 }
 
@@ -554,14 +555,14 @@ body {
 }
 
 .card__layer-notes {
-  font-size: 11px;
-  line-height: 1.7;
+  font-size: 10.5px;
+  line-height: 1.5;
   color: var(--ink);
   letter-spacing: 0.06em;
   text-transform: uppercase;
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 1px;
 }
 
 .card__layer-note {
@@ -572,44 +573,44 @@ body {
 .card__attrs {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 22px 36px;
+  gap: 14px 28px;
   width: 100%;
-  margin-bottom: 20px;
+  margin-bottom: 12px;
   text-align: left;
   padding: 0 4px;
 }
 
 .card__attr dt {
-  font-size: 10px;
+  font-size: 9.5px;
   letter-spacing: 0.22em;
   color: var(--muted);
   font-weight: 500;
-  margin-bottom: 4px;
+  margin-bottom: 3px;
 }
 
 .card__attr dd {
   font-style: italic;
-  font-size: 14px;
+  font-size: 12.5px;
   color: var(--ink);
 }
 
 .card__edition {
   font-style: italic;
-  font-size: 13px;
+  font-size: 12px;
   color: var(--ink);
-  margin-top: 6px;
+  margin-top: 4px;
 }
 
 .card__cities {
-  font-size: 11px;
+  font-size: 10px;
   letter-spacing: 0.22em;
   color: var(--ink);
-  margin: 4px 0 16px;
+  margin: 4px 0 10px;
 }
 
 .card__footnote {
   font-style: italic;
-  font-size: 10px;
+  font-size: 9.5px;
   color: var(--muted);
   letter-spacing: 0.02em;
 }
@@ -692,17 +693,19 @@ body {
   .ms-monogram--large { width: 160px; }
   .display { font-size: 24px; }
   .display--lg { font-size: 30px; }
+  /* Below 900px the fixed two-column shape gives way to a scrollable
+     single-column stack — there is no longer enough horizontal room to
+     keep the bottle and card side by side. */
+  .screen--carte { overflow-y: auto; align-items: flex-start; }
   .carte-layout {
     grid-template-columns: 1fr;
-    grid-template-rows: auto auto auto;
     column-gap: 0;
     row-gap: 32px;
     justify-items: center;
+    height: auto;
   }
-  /* Collapse to a single stacked column: header → bottle → card. */
-  .carte-header   { grid-column: 1; grid-row: 1; }
-  .carte-bottle-col { grid-column: 1; grid-row: 2; padding-top: 0; }
-  .card { grid-column: 1; grid-row: 3; justify-self: center; padding: 36px 32px 28px; }
+  .carte-left { height: auto; gap: 24px; }
+  .card { max-height: none; padding: 36px 32px 28px; }
   .card__name { font-size: 60px; }
   .bottle-line--reveal { width: 180px; }
 }

@@ -16,7 +16,6 @@ const TAG_LABELS = {
   head: [
     { id: 'citrus',    label: 'citrus' },
     { id: 'green',     label: 'green' },
-    { id: 'aldehydic', label: 'aldehydic' },
     { id: 'aromatic',  label: 'aromatic' },
     { id: 'marine',    label: 'marine' },
     { id: 'spice',     label: 'spice' },
@@ -26,7 +25,6 @@ const TAG_LABELS = {
     { id: 'floral',  label: 'floral' },
     { id: 'iris',    label: 'iris' },
     { id: 'rose',    label: 'rose' },
-    { id: 'powder',  label: 'powder' },
     { id: 'tea',     label: 'tea' },
     { id: 'honey',   label: 'honey' },
     { id: 'tobacco', label: 'tobacco' }
@@ -35,11 +33,8 @@ const TAG_LABELS = {
     { id: 'wood',    label: 'wood' },
     { id: 'smoke',   label: 'smoke' },
     { id: 'amber',   label: 'amber' },
-    { id: 'leather', label: 'leather' },
-    { id: 'oud',     label: 'oud' },
     { id: 'vanilla', label: 'vanilla' },
-    { id: 'musk',    label: 'musk' },
-    { id: 'incense', label: 'incense' }
+    { id: 'musk',    label: 'musk' }
   ]
 };
 
@@ -201,13 +196,18 @@ function displayMaterial(name) {
   return (m ? m[1] : name).toUpperCase();
 }
 
+// Show the three most defining notes per layer — the ones the AI weighted
+// most heavily for this brief. Sorting by pct ensures the card surfaces
+// the materials that actually shape the composition's character, not
+// whatever order the model happened to emit.
 function renderLayerNotes(targetEl, notes) {
   targetEl.innerHTML = '';
   if (!Array.isArray(notes) || notes.length === 0) {
     targetEl.textContent = '—';
     return;
   }
-  for (const n of notes) {
+  const top = notes.slice().sort((a, b) => b.pct - a.pct).slice(0, 3);
+  for (const n of top) {
     const span = document.createElement('span');
     span.className = 'card__layer-note';
     span.textContent = displayMaterial(n.material);
