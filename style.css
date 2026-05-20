@@ -200,6 +200,12 @@ body {
   transform: translateX(2px);
 }
 
+/* The down-arrow variant signals "download" on the archive save buttons.
+   On hover it dips downward instead of nudging right. */
+.btn:hover:not(:disabled) .btn__arrow--down {
+  transform: translateY(2px);
+}
+
 .link {
   color: var(--ink-soft);
   text-decoration: none;
@@ -414,6 +420,9 @@ body {
   width: 100%;
   max-width: 1100px;
   height: 100%;
+  /* 3D perspective so the card's hover tilt has depth. Distance is wide
+     enough that the parallax stays subtle, not theme-park. */
+  perspective: 1400px;
 }
 
 .carte-left {
@@ -454,11 +463,26 @@ body {
   height: auto;
 }
 
+.archive-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+}
+
 /* ─── la carte: the card itself ──────────────────────────────────────── */
 /* The card is sized to fit the viewport — its max-height is bounded by
    the screen's vertical space minus padding, so the whole composition
    stays visible without scrolling. */
 .card {
+  --rx: 0deg;
+  --ry: 0deg;
+  --lift: 0px;
+  --glow-x: 50%;
+  --glow-y: 50%;
+  --glow-opacity: 0;
+
+  position: relative;
   width: 100%;
   max-width: 400px;
   max-height: calc(100vh - 64px);
@@ -472,6 +496,65 @@ body {
   text-align: center;
   font-size: 12px;
   overflow: hidden;
+  transform-style: preserve-3d;
+  transform:
+    perspective(1400px)
+    translateY(var(--lift))
+    rotateX(var(--rx))
+    rotateY(var(--ry));
+  transition:
+    transform 360ms var(--ease),
+    box-shadow 360ms var(--ease);
+  will-change: transform;
+}
+
+/* A pale moving highlight that follows the cursor — like light grazing
+   a printed card. Subtle (max 0.12 opacity) so it reads as material,
+   not as glow. */
+.card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    260px circle at var(--glow-x) var(--glow-y),
+    rgba(255, 255, 255, 0.55),
+    rgba(255, 255, 255, 0) 65%
+  );
+  opacity: var(--glow-opacity);
+  transition: opacity 360ms var(--ease);
+  mix-blend-mode: soft-light;
+}
+
+.card:hover {
+  --lift: -6px;
+  --glow-opacity: 0.9;
+  box-shadow:
+    0 2px 4px rgba(20, 20, 20, 0.05),
+    0 16px 36px rgba(20, 20, 20, 0.12),
+    0 40px 96px rgba(20, 20, 20, 0.10);
+}
+
+/* Hovering tilts via JS-driven --rx/--ry; pointer-tracking handler in
+   app.js. Switch off the slow transition while the user is moving so the
+   tilt feels responsive instead of laggy. */
+.card.is-tilting {
+  transition: box-shadow 360ms var(--ease);
+}
+
+/* During archive export the card is rasterized to JPG — strip transforms,
+   the cursor-tracked glow, and the drop shadow so the saved image is a
+   neutral flat composition. Lift the viewport height clamp too so any
+   content that was clipped on screen is captured in full. */
+.card.is-capturing {
+  transform: none !important;
+  box-shadow: none !important;
+  transition: none !important;
+  max-height: none !important;
+  overflow: visible !important;
+}
+.card.is-capturing::after {
+  display: none;
 }
 
 .card__seal {
@@ -655,7 +738,8 @@ body {
 }
 
 /* Honor the user's preference to minimize motion. Keeps the structure
-   intact but collapses transitions/animations to near-instant. */
+   intact but collapses transitions/animations to near-instant, and
+   disables the card's 3D tilt entirely. */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -665,6 +749,10 @@ body {
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+  .card {
+    transform: none !important;
+  }
+  .card::after { display: none; }
 }
 
 /* ─── toast / inline error ────────────────────────────────────────────── */

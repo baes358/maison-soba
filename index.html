@@ -204,7 +204,14 @@
                stroke-linecap="round" stroke-linejoin="round"></g>
           </svg>
 
-          <button class="btn btn--small" data-action="archive">archive</button>
+          <div class="archive-actions">
+            <button class="btn btn--small" data-action="archive-jpg">
+              save jpg <span class="btn__arrow btn__arrow--down">↓</span>
+            </button>
+            <button class="btn btn--small" data-action="archive-pdf">
+              save pdf <span class="btn__arrow btn__arrow--down">↓</span>
+            </button>
+          </div>
           <a class="link link--quiet" href="#" data-action="reset">new composition →</a>
         </div>
       </div>
@@ -256,6 +263,6 @@
   <!-- Inline error banner — fades in over whatever screen is active. -->
   <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 
-  <script type="module" src="app.js?v=6"></script>
+  <script type="module" src="app.js?v=9"></script>
 </body>
 </html>

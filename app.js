@@ -348,13 +348,130 @@ async function handleMacerate(e) {
   }
 }
 
-function handleArchive() {
+// Slug a perfume name into a safe filename: "Folded Light" → "folded-light".
+function slugify(s) {
+  return (s || 'composition')
+    .toLowerCase()
+    .normalize('NFKD').replace(/[̀-ͯ]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 60) || 'composition';
+}
+
+// Trigger a browser download for a data URL or blob URL.
+function triggerDownload(href, filename) {
+  const link = document.createElement('a');
+  link.download = filename;
+  link.href = href;
+  link.click();
+}
+
+// Render the card to a high-DPI JPG data URL. Shared by both JPG and PDF
+// export paths: we always go through a raster step so the PDF embeds the
+// same pixel-perfect snapshot the user sees on screen (including the
+// custom script font, SVG monogram, etc).
+async function renderCardJpeg() {
+  const card = $('#fragrance-card');
+  if (!card) throw new Error('card not in DOM');
+
+  // Lazy-import so the library only loads when the user actually saves —
+  // keeps the first-paint payload small. esm.sh serves a clean ESM build.
+  const { toJpeg } = await import('https://esm.sh/html-to-image@1.11.13');
+
+  // Flatten the card for capture: remove the cursor tilt + hover lift +
+  // pointer-tracked highlight, so the rasterized image is a neutral
+  // straight-on shot. is-capturing also lifts max-height/overflow so the
+  // full content is captured even when on-screen it was clamped to vh.
+  card.classList.add('is-capturing');
+
+  try {
+    // Wait for webfonts so the JPG captures Maison Sezanne for the script
+    // name and Switzer for the body, not a mid-swap fallback face.
+    if (document.fonts?.ready) await document.fonts.ready;
+
+    // Give the browser a frame to apply the flat transform before render.
+    await new Promise(r => requestAnimationFrame(r));
+
+    const dataUrl = await toJpeg(card, {
+      quality: 0.96,
+      pixelRatio: 2,
+      backgroundColor: '#FAFAF8',
+      cacheBust: true
+    });
+
+    // Measure the captured size so the caller (PDF path) knows the
+    // image's natural aspect ratio without having to decode it twice.
+    const rect = card.getBoundingClientRect();
+    return { dataUrl, width: rect.width * 2, height: rect.height * 2 };
+  } finally {
+    card.classList.remove('is-capturing');
+  }
+}
+
+// Wrap an async export handler with shared button-disabled, error toast,
+// archive bookkeeping. `format` is shown in the "preparing…" label.
+async function runArchiveExport(actionAttr, format, exportFn) {
   if (!state.composition) return;
-  state.archive.push({
-    composition: state.composition,
-    when: new Date().toISOString()
+  const btn = $$(`[data-action="${actionAttr}"]`)[0];
+  const buttons = $$('[data-action^="archive-"]');
+  const originalLabel = btn?.textContent;
+
+  buttons.forEach(b => { b.disabled = true; });
+  if (btn) btn.textContent = `preparing ${format}…`;
+
+  try {
+    await exportFn();
+    state.archive.push({ composition: state.composition, when: new Date().toISOString(), format });
+    showToast(`Saved. ${state.archive.length} composition${state.archive.length === 1 ? '' : 's'} archived this session.`);
+  } catch (err) {
+    console.error(`[archive:${format}]`, err);
+    showToast(`The card could not be saved as ${format.toUpperCase()}. Please try again.`, 5000);
+  } finally {
+    buttons.forEach(b => { b.disabled = false; });
+    if (btn) btn.textContent = originalLabel;
+  }
+}
+
+async function handleArchiveJpg() {
+  await runArchiveExport('archive-jpg', 'jpg', async () => {
+    const { dataUrl } = await renderCardJpeg();
+    triggerDownload(dataUrl, `maison-sillage-${slugify(state.composition?.name)}.jpg`);
   });
-  showToast(`Archived. ${state.archive.length} composition${state.archive.length === 1 ? '' : 's'} in this session.`);
+}
+
+// PDF export: render the card to a JPG, then place that image on a US
+// Letter page at print resolution. Margins are generous so the card sits
+// like a postcard centered on the page.
+async function handleArchivePdf() {
+  await runArchiveExport('archive-pdf', 'pdf', async () => {
+    const [{ dataUrl, width, height }, { jsPDF }] = await Promise.all([
+      renderCardJpeg(),
+      import('https://esm.sh/jspdf@2.5.1')
+    ]);
+
+    // US Letter portrait, inches. 1 inch = 72 pt internally; jsPDF handles
+    // the conversion. Margins of 0.75" on every side leave a clean border.
+    const pageW = 8.5;
+    const pageH = 11;
+    const margin = 0.75;
+    const maxW = pageW - margin * 2;
+    const maxH = pageH - margin * 2;
+
+    // Fit the image inside the printable area while preserving aspect.
+    const imgAspect = width / height;
+    let drawW = maxW;
+    let drawH = drawW / imgAspect;
+    if (drawH > maxH) {
+      drawH = maxH;
+      drawW = drawH * imgAspect;
+    }
+    const x = (pageW - drawW) / 2;
+    const y = (pageH - drawH) / 2;
+
+    const pdf = new jsPDF({ unit: 'in', format: 'letter', orientation: 'portrait' });
+    pdf.addImage(dataUrl, 'JPEG', x, y, drawW, drawH, undefined, 'FAST');
+    pdf.save(`maison-sillage-${slugify(state.composition?.name)}.pdf`);
+  });
 }
 
 function handleReset() {
@@ -371,6 +488,45 @@ function handleReset() {
   goTo('confidence');
 }
 
+// ─── card hover tilt ────────────────────────────────────────────────────
+// Pointer-driven 3D tilt — feels like turning a printed card in your hand.
+// Max tilt is intentionally small (~8°) so the effect stays restrained;
+// the highlight gradient is what sells the depth.
+function wireCardHover() {
+  const card = $('#fragrance-card');
+  if (!card) return;
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  const MAX_TILT = 8;
+
+  let raf = 0;
+  const onMove = (e) => {
+    if (raf) cancelAnimationFrame(raf);
+    raf = requestAnimationFrame(() => {
+      const r = card.getBoundingClientRect();
+      const px = (e.clientX - r.left) / r.width;   // 0..1
+      const py = (e.clientY - r.top)  / r.height;  // 0..1
+      // ry rotates around vertical axis (left/right tilt)
+      // rx rotates around horizontal axis (top/bottom tilt, inverted)
+      const ry = (px - 0.5) *  MAX_TILT * 2;
+      const rx = (0.5 - py) *  MAX_TILT * 2;
+      card.style.setProperty('--rx', `${rx.toFixed(2)}deg`);
+      card.style.setProperty('--ry', `${ry.toFixed(2)}deg`);
+      card.style.setProperty('--glow-x', `${(px * 100).toFixed(1)}%`);
+      card.style.setProperty('--glow-y', `${(py * 100).toFixed(1)}%`);
+    });
+  };
+
+  card.addEventListener('pointerenter', () => card.classList.add('is-tilting'));
+  card.addEventListener('pointermove', onMove);
+  card.addEventListener('pointerleave', () => {
+    if (raf) cancelAnimationFrame(raf);
+    card.classList.remove('is-tilting');
+    card.style.setProperty('--rx', '0deg');
+    card.style.setProperty('--ry', '0deg');
+  });
+}
+
 // ─── boot ───────────────────────────────────────────────────────────────
 function boot() {
   renderTags();
@@ -383,11 +539,14 @@ function boot() {
   // Wire actions
   $$('[data-action="begin"]').forEach(b => b.addEventListener('click', handleBegin));
   $$('[data-action="continue"]').forEach(b => b.addEventListener('click', handleContinue));
-  $$('[data-action="archive"]').forEach(b => b.addEventListener('click', handleArchive));
+  $$('[data-action="archive-jpg"]').forEach(b => b.addEventListener('click', handleArchiveJpg));
+  $$('[data-action="archive-pdf"]').forEach(b => b.addEventListener('click', handleArchivePdf));
   $$('[data-action="reset"]').forEach(b => b.addEventListener('click', e => { e.preventDefault(); handleReset(); }));
 
   $('#form-confidence').addEventListener('submit', handleConfidenceSubmit);
   $('#form-composition').addEventListener('submit', handleMacerate);
+
+  wireCardHover();
 
   // First screen
   goTo('landing');
